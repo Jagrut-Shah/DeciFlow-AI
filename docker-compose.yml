@@ -1,0 +1,5 @@
+version: '3.8'
+
+services:
+  # Base project structure
+  # Services will be defined here (backend, frontend, ml, etc.)
