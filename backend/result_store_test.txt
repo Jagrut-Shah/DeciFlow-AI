@@ -1,0 +1,7 @@
+[PASS] Save + Get round-trip
+[PASS] Missing key returns None
+[PASS] Delete removes key
+[PASS] Concurrent writes: 20 results stored safely
+[PASS] WorkflowEngine saves result: decision={'action': 'REDUCE_PRICE', 'score': 0.504, 'impact': 0.8, 'confidence': 0.9, 'feasibility': 0.7, 'explanation': "Action 'REDUCE_PRICE' was selected due to a robust score of 0.50 derived from 0.8 impact and 0.9 confidence.", '_fallback': False}
+
+=== ALL RESULT STORE TESTS PASSED ===

@@ -1,0 +1,10 @@
+[PASS] T1 - Default status=PENDING, no timestamps
+[PASS] T2 - COMPLETED: started_at set, completed_at set, duration=0.002s
+[PASS] T3 - ResultStore.status=COMPLETED
+[PASS] T4 - Store snapshots sequence: ['RUNNING', 'COMPLETED']
+[PASS] T5 - FAILED: status=FAILED, error=Pipeline failed at step 'FeatureEngineering': intentional boom
+[PASS] T6 - RESILIENT with broken step: status=COMPLETED
+[PASS] T7 - duration_seconds=0.001859
+[PASS] T8 - metadata.mode=RESILIENT
+
+=== 8/8 PASSED ===
