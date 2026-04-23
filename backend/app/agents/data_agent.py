@@ -115,6 +115,19 @@ class DataAgent(BaseAgent):
 
         quality = self._quality_score(raw_records, issues)
 
+        # Sort by date before extracting metrics to ensure trend detection is accurate.
+        # Invalid dates are sorted to the beginning to minimize impact on the timeline.
+        def _date_sort_key(r):
+            raw_val = r.get("date")
+            if not raw_val:
+                return datetime.min
+            try:
+                return datetime.strptime(str(raw_val), "%Y-%m-%d")
+            except ValueError:
+                return datetime.min
+
+        cleaned.sort(key=_date_sort_key)
+
         return {
             "status":               "ok",
             "agent":                self.name,
@@ -371,7 +384,7 @@ class DataAgent(BaseAgent):
         performance: dict[str, dict] = {}
 
         for record in records:
-            category = str(record.get("category") or "uncategorised").strip() or "uncategorised"
+            category = str(record.get("category") or "Uncategorised").strip().title() or "Uncategorised"
 
             if category not in performance:
                 performance[category] = {"total_sales": 0.0, "total_revenue": 0.0}

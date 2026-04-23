@@ -40,6 +40,7 @@ Output shape:
     }
 """
 
+import re
 from base_agent import BaseAgent
 
 
@@ -452,24 +453,21 @@ class DecisionAgent(BaseAgent):
     @staticmethod
     def _extract_quoted(text: str) -> str:
         """
-        Extracts the first single-quoted substring from a string.
+        Extracts the first single or double-quoted substring from a string.
 
         Used to pull category names out of prediction text like:
             "'Electronics' may continue to underperform."
 
         Args:
-            text (str): Input string potentially containing 'quoted text'.
+            text (str): Input string potentially containing 'quoted text' or "quoted text".
 
         Returns:
             str: The quoted content, or an empty string if not found.
         """
-        start = text.find("'")
-        if start == -1:
-            return ""
-        end = text.find("'", start + 1)
-        if end == -1:
-            return ""
-        return text[start + 1:end]
+        # Supports both single and double quotes.
+        # Captures everything inside the first pair of quotes.
+        match = re.search(r"['\"](.*?)['\"]", text)
+        return match.group(1) if match else ""
 
     @staticmethod
     def _decision(
