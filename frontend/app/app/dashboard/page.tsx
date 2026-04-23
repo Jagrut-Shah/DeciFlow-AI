@@ -15,7 +15,7 @@ export default function Dashboard() {
                     <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mb-2">
                         Welcome back, Richa 👋
                     </h1>
-                    <p className="text-gray-400 text-lg">Here's your AI-powered performance overview.</p>
+                    <p className="text-gray-400 text-lg">Here&apos;s your AI-powered performance overview.</p>
                 </div>
             </div>
 
