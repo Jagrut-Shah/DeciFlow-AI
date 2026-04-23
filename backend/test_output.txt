@@ -1,0 +1,113 @@
+﻿
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  1 ┬╖ CRITICAL BUG VERIFICATION
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+[92mΓ£ö PASS[0m  Test 1 ΓÇö Payload Key Fix
+         Worker received: {
+           "revenue": 15000.5,
+           "users": 300,
+           "region": "APAC"
+         }
+         Expected: revenue=15000.5, users=300, region='APAC'
+         payload_is_empty: False
+
+[92mΓ£ö PASS[0m  Test 2 ΓÇö End-to-End Data Flow (all stages non-empty)
+         raw_data: {"source": "workflow_engine", "record_count": 4, "fields": ["revenue", "users", "region", "churn_rate"], "raw": {"revenu
+         features: {"numeric": {"revenue": 15000.5, "users": 300.0, "churn_rate": 0.07}, "boolean": {}, "text": {"region": "APAC"}, "featur
+         insights: {"insights_summary": "Analyzed 4 features. Top signal: 'revenue'. Confidence: 40%. \u26a0 Anomaly detected.", "top_signa
+         predictions: {"prediction_score": 0.24, "confidence": 0.4, "probabilities": {"positive": 0.24, "negative": 0.76}, "_fallback": false}
+         decisions: {"action": "REDUCE_PRICE", "score": 0.504, "impact": 0.8, "confidence": 0.9, "feasibility": 0.7, "explanation": "Action 
+         simulation: {"projected_roi": 1.5711, "risk_level": "low", "recommendation": "Execute 'REDUCE_PRICE' with low risk profile. Projecte
+python : Traceback (most 
+recent call last):
+At line:1 char:32
++ ... 
+HONIOENCODING='utf-8'; 
+python 
+test_verification_suite.py 
+2>&1 | Out-F ...
++                          
+  ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (Tra  
+  ceback (most recent ca   
+ ll last)::String) [],     
+RemoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+  File "C:\Users\HP\Downloa
+ds\DeciFlow AI\backend\test
+_verification_suite.py", 
+line 282, in <module>
+    asyncio.run(_test3_trac
+e_id())
+    ~~~~~~~~~~~^^^^^^^^^^^^
+^^^^^^^
+  File "C:\Python314\Lib\as
+yncio\runners.py", line 
+204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\as
+yncio\runners.py", line 
+127, in run
+    return self._loop.run_u
+ntil_complete(task)
+           ~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\as
+yncio\base_events.py", 
+line 719, in 
+run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\HP\Downloa
+ds\DeciFlow AI\backend\test
+_verification_suite.py", 
+line 245, in 
+_test3_trace_id
+    insight = InsightInput(
+        
+insight_id="ins-001",
+    ...<3 lines>...
+        
+top_features={"revenue": 
+0.9},
+    )
+  File "C:\Users\HP\AppData
+\Roaming\Python\Python314\s
+ite-packages\pydantic\main.
+py", line 250, in __init__
+    validated_self = self._
+_pydantic_validator__.valid
+ate_python(data, 
+self_instance=self)
+pydantic_core._pydantic_cor
+e.ValidationError: 2 
+validation errors for 
+InsightInput
+context
+  Field required 
+[type=missing, 
+input_value={'insight_id': 
+'ins-001',...ures': 
+{'revenue': 0.9}}, 
+input_type=dict]
+    For further 
+information visit https://e
+rrors.pydantic.dev/2.12/v/m
+issing
+metrics
+  Field required 
+[type=missing, 
+input_value={'insight_id': 
+'ins-001',...ures': 
+{'revenue': 0.9}}, 
+input_type=dict]
+    For further 
+information visit https://e
+rrors.pydantic.dev/2.12/v/m
+issing
