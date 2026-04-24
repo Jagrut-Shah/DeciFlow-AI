@@ -1,8 +1,33 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Mode - Soft Ivory with elegant contrast */
+  --background: #f8fafc;
+  --foreground: #0f172a; /* Slate 900 for high contrast text */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(15, 23, 42, 0.08); /* Darker border for light mode */
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  
+  /* Sky / Rose / Amber glows for light mode */
+  --radial-glow-1: rgba(14, 165, 233, 0.12); /* Sky glow */
+  --radial-glow-2: rgba(244, 63, 94, 0.08);  /* Rose glow */
+  --radial-glow-3: rgba(245, 158, 11, 0.08); /* Amber glow */
+}
+
+.dark {
+  /* Dark Mode - Neutral Slate Black */
+  --background: #0b0f19; /* Deep neutral/slate dark */
+  --foreground: #f8fafc;
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --panel-bg: rgba(15, 20, 30, 0.6);
+  
+  /* Sky / Rose / Amber glows for dark mode */
+  --radial-glow-1: rgba(14, 165, 233, 0.15);
+  --radial-glow-2: rgba(244, 63, 94, 0.15);
+  --radial-glow-3: rgba(245, 158, 11, 0.15);
 }
 
 @theme inline {
@@ -12,15 +37,72 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image: 
+    radial-gradient(circle at 15% 50%, var(--radial-glow-1) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, var(--radial-glow-2) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, var(--radial-glow-3) 0%, transparent 50%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.3); /* Sky colored thumb */
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(14, 165, 233, 0.6);
+}
+
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.dark .glass-panel {
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+}
+
+.text-glow {
+  text-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+}
+
+.accent-glow {
+  filter: drop-shadow(0 0 12px rgba(14, 165, 233, 0.5));
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(14, 165, 233, 0.3);
+  border-radius: 20px;
 }

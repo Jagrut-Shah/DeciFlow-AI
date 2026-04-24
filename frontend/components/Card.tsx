@@ -1,4 +1,7 @@
+"use client";
+
 import React from 'react';
+import { motion } from 'framer-motion';
 
 interface CardProps {
   children: React.ReactNode;
@@ -8,13 +11,22 @@ interface CardProps {
 
 export default function Card({ children, className = '', glowOnHover = true }: CardProps) {
   return (
-    <div className={`
-      bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl p-6
-      transition-all duration-300 ease-in-out
-      ${glowOnHover ? 'hover:bg-white/10 hover:shadow-[0_4px_30px_rgba(99,102,241,0.2)] hover:-translate-y-1' : ''}
-      ${className}
-    `}>
-      {children}
-    </div>
+    <motion.div 
+      whileHover={glowOnHover ? { y: -4 } : {}}
+      className={`
+        relative overflow-hidden
+        bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.05] backdrop-blur-xl rounded-2xl
+        transition-colors duration-500 ease-out shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)]
+        ${glowOnHover ? 'hover:border-sky-500/40 dark:hover:border-rose-500/30 hover:shadow-[0_20px_50px_rgba(14,165,233,0.1)] dark:hover:shadow-[0_20px_50px_rgba(244,63,94,0.15)]' : ''}
+        ${className}
+      `}
+    >
+      {/* Subtle Inner Glow */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300 dark:via-white/10 to-transparent pointer-events-none" />
+      <div className="relative z-10 w-full h-full">
+        {children}
+      </div>
+    </motion.div>
   );
 }
+

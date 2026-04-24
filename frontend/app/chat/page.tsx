@@ -2,7 +2,9 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Card from "@/components/Card";
-import Button from "@/components/Button";
+import { FiSend, FiUser, FiInfo } from "react-icons/fi";
+import { FaRobot } from "react-icons/fa";
+import { apiClient } from "@/services/api";
 
 interface Message {
     id: number;
@@ -12,7 +14,7 @@ interface Message {
 
 export default function ChatPage() {
     const [messages, setMessages] = useState<Message[]>([
-        { id: 1, text: "Hello! I am DeciFlow AI. How can I assist you with your data today?", sender: "ai" }
+        { id: 1, text: "Welcome to DeciFlow AI Copilot. I'm connected to your system data and ready to assist with strategic analysis. How can I help you today?", sender: "ai" }
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
@@ -26,7 +28,7 @@ export default function ChatPage() {
         scrollToBottom();
     }, [messages, isTyping]);
 
-    const handleSend = (e?: React.FormEvent) => {
+    const handleSend = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (!inputValue.trim()) return;
 
@@ -40,97 +42,115 @@ export default function ChatPage() {
         setInputValue("");
         setIsTyping(true);
 
-        // Fake AI response
-        setTimeout(() => {
-            const aiResponse: Message = {
+        try {
+            const result = await apiClient.post("/chat/", {
+                message: inputValue,
+                history: messages.map(m => ({
+                    role: m.sender === 'ai' ? 'assistant' : 'user',
+                    content: m.text
+                }))
+            });
+            
+            if (result.status === 'success') {
+                const aiResponse: Message = {
+                    id: Date.now() + 1,
+                    text: result.data.response,
+                    sender: "ai",
+                };
+                setMessages((prev) => [...prev, aiResponse]);
+            } else {
+                throw new Error("Failed to get response");
+            }
+        } catch (error) {
+            console.error("Chat error:", error);
+            const errorMsg: Message = {
                 id: Date.now() + 1,
-                text: "Based on the recent simulation run, I recommend aggressively adjusting the pricing strategy. I've noted the parameters and can generate a comprehensive PDF report if you'd like.",
+                text: "My neural link is experiencing high latency. Please ensure the kernel service is active and try resending your query.",
                 sender: "ai",
             };
-            setMessages((prev) => [...prev, aiResponse]);
+            setMessages((prev) => [...prev, errorMsg]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
+        }
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-5rem)] max-h-[900px] animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="mb-6">
-                <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mb-2">
-                    AI Copilot 💬
-                </h1>
-                <p className="text-gray-400">Ask questions about your data, insights, or models.</p>
+        <div className="flex flex-col h-[calc(100vh-6rem)] max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            {/* Chat Area */}
+            <div className="flex-1 overflow-y-auto px-4 py-8 space-y-8 custom-scrollbar">
+                {messages.map((msg) => (
+                    <div
+                        key={msg.id}
+                        className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} group`}
+                    >
+                        <div className={`flex gap-4 max-w-[85%] md:max-w-[70%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 ${
+                                msg.sender === 'user' 
+                                ? 'bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/10 group-hover:bg-slate-200 dark:bg-white/10' 
+                                : 'bg-indigo-500/20 border-indigo-500/30 group-hover:bg-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]'
+                            }`}>
+                                {msg.sender === 'user' ? <FiUser className="text-slate-500 dark:text-gray-400" /> : <FaRobot className="text-indigo-400" />}
+                            </div>
+                            
+                            <div className={`
+                                p-5 rounded-3xl shadow-2xl transition-all duration-500
+                                ${msg.sender === 'user'
+                                    ? 'bg-gradient-to-br from-indigo-600 to-indigo-800 text-slate-900 dark:text-white rounded-tr-none'
+                                    : 'bg-white/[0.03] border border-slate-300 dark:border-white/10 text-slate-700 dark:text-gray-200 rounded-tl-none backdrop-blur-3xl hover:bg-white/[0.05]'}
+                            `}>
+                                <p className="leading-relaxed text-[15px] selection:bg-white/20">{msg.text}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
+                {isTyping && (
+                    <div className="flex justify-start">
+                        <div className="flex gap-4 items-center">
+                            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                                <FaRobot className="text-indigo-400/50 animate-pulse" />
+                            </div>
+                            <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-gray-400 py-4 px-6 rounded-3xl rounded-tl-none backdrop-blur-md flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-indigo-400/60 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                <span className="w-1.5 h-1.5 bg-indigo-400/60 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                <span className="w-1.5 h-1.5 bg-indigo-400/60 rounded-full animate-bounce"></span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                <div ref={messagesEndRef} />
             </div>
 
-            <Card className="flex-1 flex flex-col p-0 overflow-hidden relative border-indigo-500/20">
-                {/* Chat Area */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-                    {messages.map((msg) => (
-                        <div
-                            key={msg.id}
-                            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`}
-                        >
-                            <div className={`
-                max-w-[80%] md:max-w-[70%] p-4 rounded-2xl
-                ${msg.sender === 'user'
-                                    ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-tr-sm'
-                                    : 'bg-white/10 border border-white/5 text-gray-200 rounded-tl-sm backdrop-blur-md'}
-              `}>
-                                <p className="leading-relaxed">{msg.text}</p>
-                            </div>
-                        </div>
-                    ))}
+            {/* Hint Box */}
+            <div className="px-6 py-3 flex items-center gap-2 text-slate-500 dark:text-gray-500 text-xs font-semibold uppercase tracking-widest animate-pulse">
+                <FiInfo size={14} />
+                <span>AI uses historical context for enhanced reasoning</span>
+            </div>
 
-                    {isTyping && (
-                        <div className="flex justify-start animate-in fade-in">
-                            <div className="bg-white/10 border border-white/5 text-gray-200 py-4 px-5 rounded-2xl rounded-tl-sm backdrop-blur-md flex items-center gap-2">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-300"></div>
-                            </div>
-                        </div>
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-
-                {/* Input Area */}
-                <div className="p-4 border-t border-white/10 bg-[#0a0f1a]/80 backdrop-blur-lg">
+            {/* Input Area */}
+            <div className="p-6 mb-4">
+                <Card className="p-2 bg-white/[0.02] border-slate-300 dark:border-white/10 backdrop-blur-3xl shadow-2xl rounded-[2.5rem] group focus-within:border-indigo-500/30 transition-all">
                     <form
                         onSubmit={handleSend}
-                        className="flex gap-3 max-w-4xl mx-auto items-end"
+                        className="flex gap-2"
                     >
-                        <div className="flex-1 relative">
-                            <input
-                                type="text"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                placeholder="Ask DeciFlow AI anything..."
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-gray-500"
-                            />
-                        </div>
-                        <Button
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            placeholder="Ask DeciFlow AI about your strategy..."
+                            className="flex-1 bg-transparent border-none px-8 py-5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 placeholder:text-slate-600 dark:text-gray-600 text-[16px]"
+                        />
+                        <button
                             type="submit"
                             disabled={!inputValue.trim() || isTyping}
-                            className="py-4 px-6 rounded-xl shrink-0"
+                            className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-slate-900 dark:text-white w-14 h-14 rounded-[1.8rem] flex items-center justify-center transition-all shadow-xl shadow-indigo-600/20 active:scale-90"
                         >
-                            Send <span className="ml-1">✈️</span>
-                        </Button>
+                            <FiSend size={20} />
+                        </button>
                     </form>
-                </div>
-            </Card>
-
-            <style dangerouslySetInnerHTML={{
-                __html: `
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(255, 255, 255, 0.1);
-          border-radius: 20px;
-        }
-      `}} />
+                </Card>
+            </div>
         </div>
     );
-}
+}
