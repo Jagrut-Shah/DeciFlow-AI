@@ -77,10 +77,21 @@ class WorkflowEngine:
         await self._persist(state)
 
         # ── Execute steps ─────────────────────────────────────────────────────
+        
+        async def _run_data(data):
+            return await self.data.process_raw_data("workflow_engine", data)
+            
+        async def _run_decision(predictions):
+            return await self.decision.orchestrate_decision({
+                "session_id": state.session_id,
+                "insights": state.insights,
+                "predictions": predictions,
+            })
+
         steps = [
             PipelineStep(
                 name="DataIngestion",
-                func=lambda data: self.data.process_raw_data("workflow_engine", data),
+                func=_run_data,
                 input_key="raw_data",
                 output_key="raw_data",
             ),
@@ -104,11 +115,7 @@ class WorkflowEngine:
             ),
             PipelineStep(
                 name="Decision",
-                func=lambda predictions, _state=state: self.decision.orchestrate_decision({
-                    "session_id": _state.session_id,
-                    "insights": _state.insights,
-                    "predictions": predictions,
-                }),
+                func=_run_decision,
                 input_key="predictions",
                 output_key="decisions",
             ),

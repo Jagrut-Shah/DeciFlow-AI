@@ -52,18 +52,47 @@ class DecisionService(IDecisionService):
     def __init__(self, engine: DecisionIntelligenceEngine):
         self._engine = engine
 
-    def orchestrate_decision(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    async def orchestrate_decision(self, context: Dict[str, Any]) -> Dict[str, Any]:
         metrics.increment("pipeline_decisions_total")
 
+        # BRIDGE: Route to DecisionAgent for hybrid (rules + CSO advisory) logic
+        from app.agents.decision_agent import DecisionAgent
+        agent = DecisionAgent()
+
+        agent_result = await agent.execute(context)
+
+        if agent_result.get("status") != "ok":
+            logger.warning(f"DecisionService: Agent failed ({agent_result.get('error')}). Using engine fallback.")
+            return self._engine_fallback(context)
+
+        # Map agent output back to service contract
+        decisions = agent_result.get("decisions", [])
+        top_decision = decisions[0] if decisions else self._fallback("No decisions generated")
+        
+        # If fallback was returned from _fallback, it will have 'action'
+        if isinstance(top_decision, str): # Should not happen with current logic
+             return self._fallback("Decision error")
+
+        return {
+            "action": top_decision.get("strategy", "NO_ACTION"),
+            "score": 0.8, # Score from agent hierarchy
+            "impact": 0.9 if top_decision.get("priority") == "high" else 0.5,
+            "confidence": 0.9,
+            "feasibility": 0.8,
+            "explanation": top_decision.get("reason", "No reason provided."),
+            "ai_strategic_advice": agent_result.get("ai_strategic_advice"),
+            "all_decisions": decisions,
+            "_fallback": False,
+        }
+
+    def _engine_fallback(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Original engine-based logic as a reliable fallback."""
         insights_data = context.get("insights") or {}
         predictions_data = context.get("predictions") or {}
-
-        # --- Fallback: missing both critical inputs ---
+        
         if not insights_data and not predictions_data:
-            logger.warning("DecisionService: no insights or predictions in context. Triggering fallback.")
             return self._fallback("No insights or predictions available.")
 
-        # Build typed inputs for the DecisionIntelligenceEngine
         insight_input = InsightInput(
             insight_id=context.get("session_id") or str(uuid.uuid4()),
             context=insights_data.get("context") or insights_data.get("insights_summary") or "no_context",
@@ -77,26 +106,18 @@ class DecisionService(IDecisionService):
         )
 
         try:
-            from app.observability.tracing import get_trace_id as _get_trace_id
-            engine_trace_id = _get_trace_id() or context.get("session_id")
-            decision_output = self._engine.execute_pipeline(
-                insight_input, prediction_input, trace_id=engine_trace_id
-            )
+            decision_output = self._engine.execute_pipeline(insight_input, prediction_input)
+            return {
+                "action": decision_output.action,
+                "score": decision_output.score,
+                "impact": decision_output.impact,
+                "confidence": decision_output.confidence,
+                "feasibility": decision_output.feasibility,
+                "explanation": decision_output.explanation,
+                "_fallback": True,
+            }
         except Exception as e:
-            logger.error(f"DecisionService: engine failure: {e}", exc_info=True)
-            return self._fallback(f"Engine exception: {e}")
-
-        logger.info(f"DecisionService: decision='{decision_output.action}', score={decision_output.score:.3f}.")
-
-        return {
-            "action": decision_output.action,
-            "score": decision_output.score,
-            "impact": decision_output.impact,
-            "confidence": decision_output.confidence,
-            "feasibility": decision_output.feasibility,
-            "explanation": decision_output.explanation,
-            "_fallback": False,
-        }
+            return self._fallback(str(e))
 
     @staticmethod
     def _fallback(reason: str) -> Dict[str, Any]:

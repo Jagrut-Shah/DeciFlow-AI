@@ -3,5 +3,5 @@ from typing import Any, Dict
 
 class IFeatureService(ABC):
     @abstractmethod
-    def extract_features(self, processed_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def extract_features(self, processed_data: Dict[str, Any]) -> Dict[str, Any]:
         ...

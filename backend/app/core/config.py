@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import field_validator
-from typing import List, Literal
+from typing import List, Literal, Optional, Dict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "DeciFlow AI"
@@ -13,8 +13,29 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "change_me_in_production_extremely_long_string"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    ALLOWED_HOSTS: List[str] = ["*"]
-    RATE_LIMIT_PER_MINUTE: int = 60        # Future enforcement hook
+    ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1", "0.0.0.0"]
+    RATE_LIMIT_PER_MINUTE: int = 60
+    TASK_TIMEOUT: int = 30                 # Seconds before a background task is killed
+    # LLM & Vertex AI
+    GOOGLE_API_KEY: Optional[str] = None
+    GOOGLE_CLOUD_PROJECT: str = "bio-budget"
+    GOOGLE_CLOUD_LOCATION: str = "us-central1"
+    GOOGLE_APPLICATION_CREDENTIALS_PATH: Optional[str] = None
+    
+    # Model configuration
+    GEMINI_FLASH_MODEL: str = "gemini-2.0-flash"
+    GEMINI_PRO_MODEL: str = "gemini-1.5-pro-002"
+    
+    @property
+    def GEMINI_MODELS(self) -> dict:
+        return {
+            "flash": self.GEMINI_FLASH_MODEL,
+            "pro": self.GEMINI_PRO_MODEL,
+            "embedding": "text-embedding-004"
+        }
+
+
+    RESULT_TTL: int = 3600                 # Seconds to keep results in memory (1 hour)
 
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
@@ -50,7 +71,7 @@ class Settings(BaseSettings):
         return v
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=[".env", "../.env"],   # check backend dir then project root
         env_ignore_empty=True,
         extra="ignore",
     )

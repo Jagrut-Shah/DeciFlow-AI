@@ -73,22 +73,9 @@ class DecisionAgent(BaseAgent):
     # Core logic — called by BaseAgent.execute()
     # ------------------------------------------------------------------
 
-    def run(self, input_data: dict) -> dict:
+    async def run(self, input_data: dict) -> dict:
         """
         Orchestrates decision generation from upstream agent output.
-
-        Steps:
-          1. Extract insights, main_insight, and predictions.
-          2. Generate decisions from each signal source.
-          3. Deduplicate by type — one decision per type maximum.
-          4. Sort by priority, cap at _MAX_DECISIONS.
-          5. Fall back to no-action if nothing was generated.
-
-        Args:
-            input_data (dict): Combined output from InsightAgent / PredictionAgent.
-
-        Returns:
-            dict: {"status": "ok", "agent": ..., "decisions": [...]}
         """
         insights     = input_data.get("insights", [])
         main_insight = input_data.get("main_insight") or self._resolve_main_insight(insights)
@@ -112,10 +99,23 @@ class DecisionAgent(BaseAgent):
         if not decisions:
             decisions = [self._no_action_decision()]
 
+        # HYBRID LOGIC: Add AI Strategic Advisory
+        ai_advice = "AI advisory skipped (Vertex AI not configured)."
+        try:
+            from app.infrastructure.llm.vertex_adapter import VertexAdapter
+            from app.core.config import settings
+            
+            if settings.GOOGLE_CLOUD_PROJECT != "your-project-id" and insights:
+                adapter = VertexAdapter()
+                ai_advice = await adapter.generate_strategic_advice(insights) or ai_advice
+        except Exception as e:
+             self._log(f"AI Strategic Advisory failed: {e}")
+
         return {
             "status":    "ok",
             "agent":     self.name,
             "decisions": decisions,
+            "ai_strategic_advice": ai_advice
         }
 
     # ------------------------------------------------------------------

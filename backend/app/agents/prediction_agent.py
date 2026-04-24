@@ -64,7 +64,7 @@ class PredictionAgent(BaseAgent):
     # Core logic — called by BaseAgent.execute()
     # ------------------------------------------------------------------
 
-    def run(self, input_data: dict) -> dict:
+    async def run(self, input_data: dict) -> dict:
         """
         Orchestrates prediction generation from upstream agent output.
 

@@ -51,20 +51,20 @@ def _data_analyst_stub(context: Dict[str, Any]) -> Dict[str, Any]:
 
 def _insight_generator_stub(context: Dict[str, Any]) -> Dict[str, Any]:
     return {
-        "key_insights": ["Trend is upward", "Anomaly in field 'revenue'"],
-        "confidence": 0.78,
+        "key_insights": [],
+        "confidence": 0.0,
     }
 
 def _decision_advisor_stub(context: Dict[str, Any]) -> Dict[str, Any]:
     return {
-        "recommendation": "PROCEED",
-        "risk": "medium",
+        "recommendation": "NONE",
+        "risk": "unknown",
     }
 
 def _risk_assessor_stub(context: Dict[str, Any]) -> Dict[str, Any]:
     return {
-        "risk_level": "medium",
-        "risk_score": 0.45,
+        "risk_level": "unknown",
+        "risk_score": 0.0,
         "flags": [],
     }
 

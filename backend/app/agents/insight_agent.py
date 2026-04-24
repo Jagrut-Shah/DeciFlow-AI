@@ -74,17 +74,10 @@ class InsightAgent(BaseAgent):
     # Core logic — called by BaseAgent.execute()
     # ------------------------------------------------------------------
 
-    def run(self, input_data: dict) -> dict:
+    async def run(self, input_data: dict) -> dict:
         """
         Orchestrates insight generation from DataAgent output.
-
-        Args:
-            input_data (dict): Full output payload from DataAgent.
-
-        Returns:
-            dict: {"status": "ok", "agent": ..., "insights": [...]}
         """
-        # Gracefully extract each section; default to safe empty values.
         metrics              = input_data.get("metrics", {})
         category_performance = input_data.get("category_performance", {})
         data_quality         = input_data.get("data_quality", 100)
@@ -108,14 +101,27 @@ class InsightAgent(BaseAgent):
             reverse=True,
         )
 
-        # Cap at 6 after sorting so the most important insights are kept.
         insights = insights[:6]
+
+        # HYBRID LOGIC: Add AI Narrative
+        ai_narrative = "AI narrative generation skipped (Vertex AI not configured)."
+        try:
+            from app.infrastructure.llm.vertex_adapter import VertexAdapter
+            from app.core.config import settings
+            
+            if settings.GOOGLE_CLOUD_PROJECT != "your-project-id":
+                adapter = VertexAdapter()
+                # Run narrative generation in background or await it
+                ai_narrative = await adapter.generate_structured_insight(metrics) or ai_narrative
+        except Exception as e:
+             self._log(f"AI Narrative failed: {e}")
 
         return {
             "status":       "ok",
             "agent":        self.name,
             "main_insight": self._select_main_insight(insights),
             "insights":     insights,
+            "ai_narrative": ai_narrative
         }
 
     # ------------------------------------------------------------------

@@ -85,7 +85,7 @@ class DataAgent(BaseAgent):
     # Core logic — called by BaseAgent.execute()
     # ------------------------------------------------------------------
 
-    def run(self, input_data: dict) -> dict:
+    async def run(self, input_data: dict) -> dict:
         """
         Orchestrates the full data-processing pipeline.
 

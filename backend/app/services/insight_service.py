@@ -25,15 +25,46 @@ logger = logging.getLogger(__name__)
 
 class InsightService(IInsightService):
 
-    def generate_insights(self, features: Dict[str, Any]) -> Dict[str, Any]:
+    async def generate_insights(self, features: Dict[str, Any]) -> Dict[str, Any]:
         metrics.increment("pipeline_insights_total")
 
+        # BRIDGE: Route to InsightAgent for hybrid (heuristic + Vertex AI) logic
+        from app.agents.insight_agent import InsightAgent
+        agent = InsightAgent()
+        
+        # Format input for agent (numeric features are core)
+        agent_input = {
+            "metrics": features.get("numeric", {}),
+            "category_performance": features.get("categories", {}),
+            "data_quality": features.get("data_quality", 100)
+        }
+        
+        agent_result = await agent.execute(agent_input)
+
+        if agent_result.get("status") != "ok":
+            logger.error(f"InsightService: agent execution failed. {agent_result.get('error')}")
+            # Fallback to simple logic if agent fails
+            return self._fallback_logic(features)
+
+        # Map agent output back to service contract
+        summary = agent_result.get("main_insight", {}).get("message", "Analysis complete.")
+        
+        return {
+            "insights_summary": summary,
+            "top_signal": agent_result.get("main_insight", {}).get("type", "none"),
+            "confidence": 0.9 if agent_result.get("status") == "ok" else 0.5,
+            "anomaly_detected": any(i.get("priority") == "high" for i in agent_result.get("insights", [])),
+            "context": agent_result.get("ai_narrative", summary),
+            "metrics_snapshot": features.get("numeric", {}),
+            "all_insights": agent_result.get("insights", []),
+            "_fallback": False,
+        }
+
+    def _fallback_logic(self, features: Dict[str, Any]) -> Dict[str, Any]:
         numeric = features.get("numeric", {}) if features else {}
         feature_count = features.get("feature_count", 0) if features else 0
-
-        # --- Fallback: empty features ---
-        if not features or features.get("_fallback") or feature_count == 0:
-            logger.warning("InsightService: no features available. Returning insufficient_data insight.")
+        
+        if not features or feature_count == 0:
             return {
                 "insights_summary": "insufficient_data",
                 "top_signal": "none",
@@ -44,32 +75,16 @@ class InsightService(IInsightService):
                 "_fallback": True,
             }
 
-        # Derive confidence from feature richness (more features → more confident)
         confidence = min(1.0, feature_count / 10.0)
-
-        # Identify top signal: numeric feature with highest absolute value
-        top_signal = "none"
-        if numeric:
-            top_signal = max(numeric, key=lambda k: abs(numeric[k]))
-
-        # Simple anomaly heuristic: any numeric value > 1000 or < -100
-        anomaly = any(abs(v) > 1000 or v < -100 for v in numeric.values())
-
-        summary = (
-            f"Analyzed {feature_count} features. "
-            f"Top signal: '{top_signal}'. "
-            f"Confidence: {confidence:.0%}. "
-            f"{'⚠ Anomaly detected.' if anomaly else 'No anomalies detected.'}"
-        )
-
-        logger.info(f"InsightService: {summary}")
+        top_signal = max(numeric, key=lambda k: abs(numeric[k])) if numeric else "none"
+        summary = f"Analyzed {feature_count} features. Top signal: '{top_signal}'."
 
         return {
             "insights_summary": summary,
             "top_signal": top_signal,
             "confidence": confidence,
-            "anomaly_detected": anomaly,
+            "anomaly_detected": False,
             "context": summary,
             "metrics_snapshot": numeric,
-            "_fallback": False,
+            "_fallback": True,
         }

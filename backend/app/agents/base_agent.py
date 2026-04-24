@@ -45,7 +45,7 @@ class BaseAgent:
     # Public interface — always call this
     # ------------------------------------------------------------------
 
-    def execute(self, input_data: dict) -> dict:
+    async def execute(self, input_data: dict) -> dict:
         """
         Safe entry point for running any agent.
 
@@ -64,7 +64,7 @@ class BaseAgent:
 
         self._log("started")
         try:
-            result = self.run(input_data)
+            result = await self.run(input_data)
         except NotImplementedError:
             return self._error(
                 "run() is not implemented. Override it in your agent subclass."
@@ -85,7 +85,7 @@ class BaseAgent:
     # Override this in every subclass
     # ------------------------------------------------------------------
 
-    def run(self, input_data: dict) -> dict:
+    async def run(self, input_data: dict) -> dict:
         """
         Core agent logic. Must be overridden by every subclass.
 

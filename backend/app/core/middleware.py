@@ -38,7 +38,8 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "camera=(), microphone=(), geolocation=()"
         )
         # Remove server fingerprinting header if present
-        response.headers.pop("server", None)
+        if "server" in response.headers:
+            del response.headers["server"]
 
         return response
 

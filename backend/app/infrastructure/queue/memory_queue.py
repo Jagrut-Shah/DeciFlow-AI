@@ -35,11 +35,18 @@ class MemoryQueue(ITaskQueue):
             return
             
         try:
+            from app.core.config import settings
             start_time = time.time()
             logger.info(f"[{task.trace_id}] Executing task '{task.task_id}' ({task.task_name}) - attempt {task.retries + 1}")
-            await handler.handle(task)
+            
+            # Use wait_for to enforce a timeout on the task execution
+            await asyncio.wait_for(handler.handle(task), timeout=settings.TASK_TIMEOUT)
+            
             elapsed = time.time() - start_time
             logger.info(f"[{task.trace_id}] Task '{task.task_id}' COMPLETED successfully in {elapsed:.4f}s.")
+        except asyncio.TimeoutError:
+             logger.error(f"[{task.trace_id}] Task '{task.task_id}' TIMED OUT after {settings.TASK_TIMEOUT}s")
+             raise  # Re-raise to trigger the retry logic below
         except Exception as e:
             elapsed = time.time() - start_time
             logger.error(f"[{task.trace_id}] Task '{task.task_id}' FAILED after {elapsed:.4f}s: {str(e)}")
