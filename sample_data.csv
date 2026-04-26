@@ -1,0 +1,11 @@
+customer_id,age,income,credit_score,loan_amount,loan_status,region
+CUST001,45,85000,720,25000,Approved,North
+CUST002,28,42000,610,15000,Rejected,South
+CUST003,34,65000,680,20000,Approved,East
+CUST004,51,110000,780,50000,Approved,West
+CUST005,23,32000,580,10000,Rejected,North
+CUST006,39,75000,710,18000,Approved,East
+CUST007,41,90000,750,30000,Approved,South
+CUST008,29,55000,640,12000,Rejected,West
+CUST009,36,70000,690,22000,Approved,North
+CUST010,48,95000,740,35000,Approved,East

@@ -1,0 +1,16 @@
+customer_id,plan_type,monthly_recurring_revenue,usage_minutes,support_tickets,tenure_months,churn_risk_score,last_login_days_ago
+USR-5001,Professional,99,450,1,14,0.12,2
+USR-5002,Enterprise,499,2800,4,8,0.35,1
+USR-5003,Basic,29,80,0,3,0.08,12
+USR-5004,Professional,99,320,8,22,0.68,5
+USR-5005,Professional,99,950,2,36,0.02,0
+USR-5006,Enterprise,499,1200,0,1,0.15,2
+USR-5007,Basic,29,150,2,5,0.42,8
+USR-5008,Professional,99,2100,5,12,0.55,1
+USR-5009,Enterprise,499,3500,1,24,0.05,0
+USR-5010,Basic,29,40,1,2,0.85,20
+USR-5011,Professional,99,600,0,18,0.10,3
+USR-5012,Enterprise,499,4100,3,15,0.22,1
+USR-5013,Basic,29,200,0,9,0.18,4
+USR-5014,Professional,99,150,6,4,0.92,15
+USR-5015,Professional,99,880,1,28,0.04,1

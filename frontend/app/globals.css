@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    nav, aside, footer, button, .sidebar-link {
+        display: none !important;
+    }
+
+    main {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .simulation-card {
+        border: none !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+}
+
+:root {
+  /* Brand Palette from Design Doc */
+  --navy: #1B2B4B;
+  --sapphire: #2563EB;
+  --emerald: #16A87A;
+  --amber: #F59E0B;
+  --alert-red: #E84444;
+  --ice-blue: #F0F4FF;
+  --off-white: #F8F9FA;
+  --white: #FFFFFF;
+  --cool-gray: #E8EDF5;
+  --body-text: #4A5568;
+  --muted-text: #8896A5;
+
+  /* Functional Mappings - Light Mode */
+  --background: var(--off-white);
+  --foreground: var(--navy);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: var(--cool-gray);
+  --panel-bg: var(--white);
+  
+  /* Brand Radial Glows */
+  --radial-glow-1: rgba(37, 99, 235, 0.08); /* Sapphire Blue */
+  --radial-glow-2: rgba(22, 168, 122, 0.05); /* Emerald */
+  --radial-glow-3: rgba(245, 158, 11, 0.05); /* Amber */
+}
+
+.dark {
+  /* Maintaining Dark Mode with Brand Accents */
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --panel-bg: rgba(15, 20, 30, 0.6);
+  
+  --radial-glow-1: rgba(37, 99, 235, 0.15);
+  --radial-glow-2: rgba(22, 168, 122, 0.15);
+  --radial-glow-3: rgba(245, 158, 11, 0.15);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  /* Brand Colors */
+  --color-navy: var(--navy);
+  --color-sapphire: var(--sapphire);
+  --color-emerald: var(--emerald);
+  --color-amber: var(--amber);
+  --color-alert-red: var(--alert-red);
+  --color-ice-blue: var(--ice-blue);
+  --color-off-white: var(--off-white);
+  --color-cool-gray: var(--cool-gray);
+  --color-body-text: var(--body-text);
+  --color-muted-text: var(--muted-text);
+
+  /* Functional Aliases */
+  --color-primary: var(--sapphire);
+  --color-success: var(--emerald);
+  --color-warning: var(--amber);
+  --color-error: var(--alert-red);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  background-image: 
+    radial-gradient(circle at 15% 50%, var(--radial-glow-1) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, var(--radial-glow-2) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, var(--radial-glow-3) 0%, transparent 50%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.3); /* Sapphire colored thumb */
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.6);
+}
+
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.dark .glass-panel {
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+}
+
+.text-glow {
+  text-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+}
+
+.accent-glow {
+  filter: drop-shadow(0 0 12px rgba(22, 168, 122, 0.5));
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(37, 99, 235, 0.3);
+  border-radius: 20px;
+}
