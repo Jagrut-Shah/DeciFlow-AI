@@ -39,14 +39,29 @@ export default function InsightsPage() {
     };
 
     const itemVariants: Variants = {
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
         show: { 
             opacity: 1, 
             y: 0, 
+            filter: "blur(0px)",
             transition: { 
                 type: "spring", 
-                stiffness: 260, 
-                damping: 25 
+                stiffness: 100, 
+                damping: 20,
+                mass: 1
+            } 
+        }
+    };
+
+    const synthesisVariants: Variants = {
+        hidden: { opacity: 0, x: -20 },
+        show: { 
+            opacity: 1, 
+            x: 0,
+            transition: { 
+                delay: 0.5,
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1]
             } 
         }
     };
@@ -289,9 +304,12 @@ export default function InsightsPage() {
                             </motion.div>
                             <h2 className="text-3xl font-black mb-6 tracking-tighter italic uppercase">Executive Synthesis</h2>
                             <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
-                                <p className="text-white leading-relaxed text-xl font-black italic mb-8 border-l-4 border-sapphire pl-6 transition-all group-hover:pl-8 duration-500 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+                                <motion.p 
+                                    variants={synthesisVariants}
+                                    className="text-white leading-relaxed text-xl font-black italic mb-8 border-l-4 border-sapphire pl-6 transition-all group-hover:pl-8 duration-500 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent"
+                                >
                                     &ldquo;{mainInsight}&rdquo;
-                                </p>
+                                </motion.p>
                                 
                                 <div className="space-y-4">
                                     <h3 className="text-[10px] font-black text-emerald uppercase tracking-[0.4em] mb-4 border-b border-white/10 pb-2 inline-block">Key Signals</h3>
@@ -326,37 +344,78 @@ export default function InsightsPage() {
                     </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                    {(data?.all_decisions || []).length > 0 ? (
-                        data.all_decisions.map((item: any, idx: number) => (
-                            <motion.div 
-                                key={idx}
-                                whileHover={{ y: -8, rotateY: 5 }}
-                                className="p-10 rounded-[2.5rem] bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/5 shadow-2xl shadow-cool-gray/10 dark:shadow-none hover:border-sapphire/30 transition-all duration-500 group relative overflow-hidden"
-                            >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-sapphire/5 to-transparent rounded-bl-full group-hover:scale-150 transition-transform duration-700"></div>
-                                <div className="relative z-10 flex flex-col h-full">
-                                    <div className="flex justify-between items-start mb-8">
-                                        <span className={`text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm ${item.priority === 'high' ? 'bg-alert-red text-white' : 'bg-cool-gray dark:bg-white/10 text-muted-text dark:text-white/40'}`}>
-                                            {item.priority}
-                                        </span>
-                                        <span className="text-[10px] font-black text-muted-text dark:text-white/20 uppercase tracking-widest">{item.type}</span>
-                                    </div>
-                                    <h4 className="text-2xl font-black text-navy dark:text-white mb-6 leading-tight group-hover:text-sapphire transition-colors">{item.action}</h4>
-                                    <div className="pt-8 border-t border-cool-gray dark:border-white/5 flex flex-col gap-3 mt-auto">
-                                        <span className="text-[10px] font-black text-muted-text/40 uppercase tracking-widest">Impact Factor</span>
-                                        <span className="text-lg font-black text-emerald group-hover:translate-x-1 transition-transform leading-tight">{item.expected_impact}</span>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <div className="col-span-full py-32 text-center bg-ice-blue/20 dark:bg-white/[0.02] rounded-[3rem] border-2 border-dashed border-cool-gray dark:border-white/10 flex flex-col items-center justify-center space-y-4">
-                            <FiAward size={48} className="text-muted-text/20" />
-                            <p className="text-muted-text dark:text-white/20 font-black uppercase tracking-[0.3em] text-xs">Awaiting tactical signals for optimization...</p>
-                        </div>
-                    )}
-                </div>
+                <Card className="overflow-hidden border-none bg-white/40 dark:bg-white/[0.02] backdrop-blur-3xl shadow-2xl p-0">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-cool-gray dark:border-white/5">
+                                    <th className="px-8 py-6 text-[10px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Priority</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Strategic Action</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Rationale</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Expected Impact</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-cool-gray dark:divide-white/5">
+                                {(data?.all_decisions || []).length > 0 ? (
+                                    data.all_decisions.map((item: any, idx: number) => (
+                                        <motion.tr 
+                                            key={idx}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: idx * 0.05 }}
+                                            className="group hover:bg-sapphire/[0.02] dark:hover:bg-white/[0.01] transition-colors"
+                                        >
+                                            <td className="px-8 py-6">
+                                                <span className={`text-[9px] font-black px-3 py-1 rounded-lg uppercase tracking-widest ${
+                                                    item.priority === 'high' ? 'bg-alert-red/10 text-alert-red border border-alert-red/20' : 
+                                                    item.priority === 'medium' ? 'bg-amber/10 text-amber border border-amber/20' : 
+                                                    'bg-cool-gray dark:bg-white/5 text-muted-text dark:text-white/40'
+                                                }`}>
+                                                    {item.priority}
+                                                </span>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div>
+                                                    <p className="text-sm font-black text-navy dark:text-white group-hover:text-sapphire transition-colors mb-1">{item.action}</p>
+                                                    <span className="text-[9px] font-bold text-muted-text dark:text-white/20 uppercase tracking-widest">{item.type}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6 max-w-xs">
+                                                <p className="text-[11px] text-body-text dark:text-white/50 font-medium leading-relaxed italic">
+                                                    {item.reason || "Strategic alignment based on neural signals."}
+                                                </p>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <p className="text-xs font-black text-emerald">{item.expected_impact}</p>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex-1 h-1.5 w-16 bg-cool-gray dark:bg-white/5 rounded-full overflow-hidden">
+                                                        <motion.div 
+                                                            initial={{ width: 0 }}
+                                                            animate={{ width: `${(item.confidence || 0.8) * 100}%` }}
+                                                            className="h-full bg-sapphire"
+                                                        />
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-navy dark:text-white">
+                                                        {Math.round((item.confidence || 0.8) * 100)}%
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </motion.tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={5} className="py-20 text-center">
+                                            <p className="text-muted-text dark:text-white/20 font-black uppercase tracking-[0.3em] text-[10px]">Awaiting tactical signals...</p>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
             </motion.div>
 
             {/* Bottom Actions */}

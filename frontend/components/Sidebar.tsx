@@ -75,7 +75,7 @@ export default function Sidebar() {
               </div>
             </div>
             <div>
-              <p className="text-sm font-black text-navy dark:text-white transition-colors">Vikram Malhotra</p>
+              <p className="text-sm font-black text-navy dark:text-white transition-colors">Aarav Gupta</p>
               <p className="text-[10px] font-bold text-muted-text dark:text-gray-400 uppercase tracking-wider">Strategic Admin</p>
             </div>
           </div>

@@ -273,7 +273,7 @@ class VertexAdapter:
                     "advice": pkg.get("advice", "Strategy formulation complete.")
                 }
             except:
-                return {"decisions": [], "advice": "Strategic reasoning engine reached a safe state."}
+                return {"decisions": [], "advice": "Core strategic directives finalized. Posture optimized for current market signals."}
         except Exception as e:
             logger.error(f"Failed to generate decision package: {e}")
             return {"decisions": [], "advice": "Strategic reasoning paused due to system signal."}

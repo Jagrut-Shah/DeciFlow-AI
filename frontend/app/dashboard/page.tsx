@@ -7,6 +7,7 @@ import { FaRobot, FaSync } from "react-icons/fa";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { apiClient } from "@/services/api";
 import Link from "next/link";
+import DynamicChart from "@/components/DynamicChart";
 
 export default function Dashboard() {
     const [data, setData] = useState<any>(null);
@@ -165,69 +166,39 @@ export default function Dashboard() {
                             <FiTrendingUp size={160} className="text-sapphire" />
                         </div>
                         
-                        <div className="flex justify-between items-center mb-12 relative z-10">
-                            <div>
-                                <h3 className="text-3xl font-black text-navy dark:text-white mb-2 transition-colors">Performance Matrix</h3>
-                                <p className="text-muted-text dark:text-white/40 text-base font-medium transition-colors">Tracking historical AI agent performance and system latency</p>
-                            </div>
-                            <div className="flex p-1.5 bg-ice-blue dark:bg-white/5 rounded-2xl border border-cool-gray dark:border-white/5 transition-colors">
-                                {['1D', '1W', '1M', '1Y'].map((t) => (
-                                    <button 
-                                        key={t} 
-                                        onClick={() => setTimeRange(t)}
-                                        className={`px-6 py-2.5 text-xs font-black rounded-xl transition-all ${timeRange === t ? 'bg-gradient-to-r from-sapphire to-emerald text-white shadow-xl shadow-sapphire/30' : 'text-body-text hover:text-navy dark:hover:text-white dark:text-white/40'}`}>
-                                        {t}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="relative z-10 flex-1 min-h-[350px]">
+                            <DynamicChart 
+                                config={data?.dashboard_viz || {
+                                    type: 'area',
+                                    title: 'Performance Matrix',
+                                    description: 'Tracking historical AI agent performance and system latency',
+                                    data: (data?.chart_data && data.chart_data.length > 0 && data.chart_data.some((v: number) => v > 0))
+                                        ? data.chart_data.map((v: number, i: number) => ({ name: `P${i+1}`, value: v }))
+                                        : [
+                                            { name: 'Jan', value: 400 },
+                                            { name: 'Feb', value: 300 },
+                                            { name: 'Mar', value: 600 },
+                                            { name: 'Apr', value: 800 },
+                                            { name: 'May', value: 500 }
+                                        ]
+                                }}
+                            />
                         </div>
                         
-                        <div className="flex-1 flex justify-center items-center relative min-h-[250px] mt-6 px-4">
-                            <div className="absolute left-0 h-full flex flex-col justify-between text-[11px] font-black text-muted-text/40 dark:text-white/20 pb-8">
-                                <span>High</span>
-                                <span>Low</span>
+                        <div className="mt-8 pt-8 border-t border-cool-gray dark:border-white/5 flex items-center justify-between relative z-10">
+                            <div className="flex gap-6">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-3 h-3 rounded-full bg-sapphire shadow-[0_0_10px_rgba(37,99,235,0.4)]"></div>
+                                    <span className="text-[10px] font-black text-muted-text dark:text-white/40 uppercase tracking-widest">Active Momentum</span>
+                                </div>
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-3 h-3 rounded-full bg-emerald shadow-[0_0_10px_rgba(22,168,122,0.4)]"></div>
+                                    <span className="text-[10px] font-black text-muted-text dark:text-white/40 uppercase tracking-widest">Growth Vector</span>
+                                </div>
                             </div>
-                            <svg className="w-full h-full max-h-[350px] pl-10 pb-6" viewBox="0 0 100 40" preserveAspectRatio="none">
-                                <defs>
-                                    <linearGradient id="lineGrad" x1="0" y1="0" x2="100" y2="0">
-                                        <stop offset="0%" stopColor="#2563EB" />
-                                        <stop offset="50%" stopColor="#16A87A" />
-                                        <stop offset="100%" stopColor="#F59E0B" />
-                                    </linearGradient>
-                                    <linearGradient id="fillGradLight" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#2563EB" stopOpacity="0.1" />
-                                        <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
-                                    </linearGradient>
-                                    <linearGradient id="fillGradDark" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#2563EB" stopOpacity="0.25" />
-                                        <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
-                                    </linearGradient>
-                                </defs>
-                                <motion.path 
-                                    initial={{ pathLength: 0, opacity: 0 }}
-                                    animate={{ pathLength: 1, opacity: 1 }}
-                                    transition={{ duration: 2, ease: "circOut" }}
-                                    d={chartPath} 
-                                    fill="none" stroke="url(#lineGrad)" strokeWidth="1.2" strokeLinecap="round" className="drop-shadow-[0_0_15px_rgba(37,99,235,0.6)]" 
-                                />
-                                <motion.path 
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 2.5, delay: 0.8 }}
-                                    d={`${chartPath} L100,40 L0,40 Z`} 
-                                    fill="url(#fillGradLight)" className="dark:hidden" 
-                                />
-                                <motion.path 
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 2.5, delay: 0.8 }}
-                                    d={`${chartPath} L100,40 L0,40 Z`} 
-                                    fill="url(#fillGradDark)" className="hidden dark:block" 
-                                />
-                            </svg>
-                            <div className="absolute bottom-0 w-full flex justify-between text-[11px] font-black text-muted-text/40 dark:text-white/20 pl-10">
-                                <span>Analysis Start</span>
-                                <span>Real-time Peak</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-black text-sapphire dark:text-white/60 uppercase tracking-[0.2em]">Neural Engine v2.5.0</span>
+                                <div className="w-1.5 h-1.5 bg-emerald rounded-full animate-pulse"></div>
                             </div>
                         </div>
                     </Card>

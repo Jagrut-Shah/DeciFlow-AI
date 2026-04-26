@@ -395,5 +395,1196 @@
       }
     },
     "timestamp": 1777189139.452274
+  },
+  "9cd09e8d-e3c2-47f2-96bf-37d88b0773de": {
+    "state": {
+      "session_id": "9cd09e8d-e3c2-47f2-96bf-37d88b0773de",
+      "status": "COMPLETED",
+      "started_at": "2026-04-26T07:53:59.472893Z",
+      "completed_at": "2026-04-26T07:54:24.264641Z",
+      "raw_data": {
+        "source": "workflow_engine",
+        "record_count": 15,
+        "fields": [
+          "category",
+          "date",
+          "discount",
+          "margin",
+          "orders",
+          "price",
+          "product",
+          "profit",
+          "revenue",
+          "sales"
+        ],
+        "processed_data": [
+          {
+            "sales": 0.0,
+            "revenue": 8200.0,
+            "orders": 145.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4100.0,
+            "orders": 98.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5200.0,
+            "orders": 112.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 7900.0,
+            "orders": 138.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4400.0,
+            "orders": 105.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5600.0,
+            "orders": 120.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 9100.0,
+            "orders": 160.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 3800.0,
+            "orders": 85.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 6500.0,
+            "orders": 142.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 8600.0,
+            "orders": 152.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4800.0,
+            "orders": 115.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 7200.0,
+            "orders": 158.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 10500.0,
+            "orders": 185.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-05"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5500.0,
+            "orders": 130.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-05"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 8100.0,
+            "orders": 182.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-05"
+          }
+        ],
+        "metrics": {
+          "total_sales": 0.0,
+          "total_revenue": 99500.0,
+          "total_profit": 0.0,
+          "total_orders": 2027.0,
+          "average_sales": 0.0,
+          "avg_order_value": 49.09,
+          "avg_margin": 0.0,
+          "trend": "insufficient_data",
+          "weekend_vs_weekday": {
+            "weekday_avg_sales": 0.0,
+            "weekend_avg_sales": null,
+            "weekday_avg_revenue": 6633.33,
+            "weekend_avg_revenue": null,
+            "higher_performer": "unavailable"
+          }
+        },
+        "category_performance": {
+          "Google Search": {
+            "total_sales": 0.0,
+            "total_revenue": 44300.0,
+            "total_profit": 0.0
+          },
+          "Facebook Ads": {
+            "total_sales": 0.0,
+            "total_revenue": 22600.0,
+            "total_profit": 0.0
+          },
+          "Instagram Reels": {
+            "total_sales": 0.0,
+            "total_revenue": 32600.0,
+            "total_profit": 0.0
+          }
+        },
+        "data_quality": 29,
+        "raw": {
+          "sales": 0.0,
+          "revenue": 8200.0,
+          "orders": 145.0,
+          "price": 0.0,
+          "discount": 0.0,
+          "profit": 0.0,
+          "margin": 0.0,
+          "product": null,
+          "category": "Google Search",
+          "date": "2024-01-01"
+        },
+        "_fallback": false
+      },
+      "insights": {
+        "insights_summary": "Data quality is low. Insights may not be reliable.",
+        "top_signal": "none",
+        "confidence": 0.9,
+        "anomaly_detected": true,
+        "context": "Despite generating nearly $100K in revenue from over 2,000 orders, the reported zero profit and zero sales figures indicate a critical data integrity issue or a severe",
+        "metrics_snapshot": {
+          "sales": 0.0,
+          "revenue": 8200.0,
+          "orders": 145.0,
+          "price": 0.0,
+          "discount": 0.0,
+          "profit": 0.0,
+          "margin": 0.0
+        },
+        "all_insights": [
+          {
+            "text": "Data quality is low. Insights may not be reliable.",
+            "priority": "high",
+            "impact": "negative",
+            "confidence": 0.4
+          },
+          {
+            "text": "Order values are lower than expected.",
+            "priority": "medium",
+            "impact": "negative",
+            "confidence": 0.7
+          },
+          {
+            "text": "'Facebook Ads' is the lowest performing category.",
+            "priority": "medium",
+            "impact": "negative",
+            "confidence": 0.75
+          },
+          {
+            "text": "'Google Search' is the best performing category.",
+            "priority": "medium",
+            "impact": "positive",
+            "confidence": 0.8
+          },
+          {
+            "text": "Not enough data to determine a sales trend.",
+            "priority": "low",
+            "impact": "neutral",
+            "confidence": 0.4
+          }
+        ],
+        "visualization": {
+          "type": "bar",
+          "title": "Top Categories by Revenue",
+          "data": [
+            {
+              "name": "Google Search",
+              "value": 44300.0
+            },
+            {
+              "name": "Facebook Ads",
+              "value": 22600.0
+            },
+            {
+              "name": "Instagram Reels",
+              "value": 32600.0
+            }
+          ],
+          "description": "Comparison of performance across primary business categories."
+        },
+        "_fallback": false
+      },
+      "predictions": {
+        "prediction_score": 0.54,
+        "confidence": 0.9,
+        "probabilities": {
+          "positive": 0.54,
+          "negative": 0.46
+        },
+        "_fallback": false
+      },
+      "decisions": {
+        "action": "Improve data collection before acting on these insights.",
+        "strategy": "Improve data collection before acting on these insights.",
+        "score": 0.8,
+        "impact": 0.9,
+        "confidence": 0.8,
+        "feasibility": 0.8,
+        "explanation": "Low data quality reduces the reliability of all decisions.",
+        "ai_strategic_advice": "Strategic reasoning engine reached a safe state.",
+        "all_decisions": [
+          {
+            "action": "Improve data collection before acting on these insights.",
+            "type": "strategy",
+            "priority": "high",
+            "based_on": "Data quality is low. Insights may not be reliable.",
+            "reason": "Low data quality reduces the reliability of all decisions.",
+            "expected_impact": "More accurate insights and safer decisions going forward.",
+            "confidence": 0.8
+          }
+        ],
+        "_fallback": false
+      },
+      "simulation": {
+        "projected_roi": 1.888,
+        "risk_level": "low",
+        "recommendation": "Execute 'Improve data collection before acting on these insights.' with low risk profile. Projected ROI: 1.89x based on decision score 0.800.",
+        "decision_echo": {
+          "action": "Improve data collection before acting on these insights.",
+          "strategy": "Improve data collection before acting on these insights.",
+          "score": 0.8,
+          "impact": 0.9,
+          "confidence": 0.8,
+          "feasibility": 0.8,
+          "explanation": "Low data quality reduces the reliability of all decisions.",
+          "ai_strategic_advice": "Strategic reasoning engine reached a safe state.",
+          "all_decisions": [
+            {
+              "action": "Improve data collection before acting on these insights.",
+              "type": "strategy",
+              "priority": "high",
+              "based_on": "Data quality is low. Insights may not be reliable.",
+              "reason": "Low data quality reduces the reliability of all decisions.",
+              "expected_impact": "More accurate insights and safer decisions going forward.",
+              "confidence": 0.8
+            }
+          ],
+          "_fallback": false
+        },
+        "_fallback": false
+      },
+      "metadata": {
+        "mode": "STRICT",
+        "DataIngestion_status": "SUCCESS",
+        "DataIngestion_ms": 3.99,
+        "FeatureEngineering_status": "SUCCESS",
+        "FeatureEngineering_ms": 2.62,
+        "InsightGeneration_status": "SUCCESS",
+        "InsightGeneration_ms": 14076.98,
+        "Prediction_status": "SUCCESS",
+        "Prediction_ms": 1.27,
+        "Decision_status": "SUCCESS",
+        "Decision_ms": 10685.22,
+        "Simulation_status": "SUCCESS",
+        "Simulation_ms": 1.04
+      }
+    },
+    "timestamp": 1777190064.2657046
+  },
+  "f8bb669d-4d10-43d5-b40e-e061c8f574f3": {
+    "state": {
+      "session_id": "f8bb669d-4d10-43d5-b40e-e061c8f574f3",
+      "status": "COMPLETED",
+      "started_at": "2026-04-26T08:05:33.795702Z",
+      "completed_at": "2026-04-26T08:05:58.471503Z",
+      "raw_data": {
+        "source": "workflow_engine",
+        "record_count": 15,
+        "fields": [
+          "category",
+          "date",
+          "discount",
+          "margin",
+          "orders",
+          "price",
+          "product",
+          "profit",
+          "revenue",
+          "sales"
+        ],
+        "processed_data": [
+          {
+            "sales": 0.0,
+            "revenue": 8200.0,
+            "orders": 145.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4100.0,
+            "orders": 98.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5200.0,
+            "orders": 112.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 7900.0,
+            "orders": 138.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4400.0,
+            "orders": 105.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5600.0,
+            "orders": 120.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 9100.0,
+            "orders": 160.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 3800.0,
+            "orders": 85.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 6500.0,
+            "orders": 142.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 8600.0,
+            "orders": 152.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4800.0,
+            "orders": 115.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 7200.0,
+            "orders": 158.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 10500.0,
+            "orders": 185.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-05"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5500.0,
+            "orders": 130.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-05"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 8100.0,
+            "orders": 182.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-05"
+          }
+        ],
+        "metrics": {
+          "total_sales": 0.0,
+          "total_revenue": 99500.0,
+          "total_profit": 0.0,
+          "total_orders": 2027.0,
+          "average_sales": 0.0,
+          "avg_order_value": 49.09,
+          "avg_margin": 0.0,
+          "trend": "insufficient_data",
+          "weekend_vs_weekday": {
+            "weekday_avg_sales": 0.0,
+            "weekend_avg_sales": null,
+            "weekday_avg_revenue": 6633.33,
+            "weekend_avg_revenue": null,
+            "higher_performer": "unavailable"
+          }
+        },
+        "category_performance": {
+          "Google Search": {
+            "total_sales": 0.0,
+            "total_revenue": 44300.0,
+            "total_profit": 0.0
+          },
+          "Facebook Ads": {
+            "total_sales": 0.0,
+            "total_revenue": 22600.0,
+            "total_profit": 0.0
+          },
+          "Instagram Reels": {
+            "total_sales": 0.0,
+            "total_revenue": 32600.0,
+            "total_profit": 0.0
+          }
+        },
+        "data_quality": 29,
+        "raw": {
+          "sales": 0.0,
+          "revenue": 8200.0,
+          "orders": 145.0,
+          "price": 0.0,
+          "discount": 0.0,
+          "profit": 0.0,
+          "margin": 0.0,
+          "product": null,
+          "category": "Google Search",
+          "date": "2024-01-01"
+        },
+        "_fallback": false
+      },
+      "insights": {
+        "insights_summary": "Data quality is low. Insights may not be reliable.",
+        "top_signal": "none",
+        "confidence": 0.9,
+        "anomaly_detected": true,
+        "context": "Despite generating nearly $100k in revenue from over 2,000 orders, the complete absence of profit and average margin is a critical concern requiring immediate investigation",
+        "metrics_snapshot": {
+          "sales": 0.0,
+          "revenue": 8200.0,
+          "orders": 145.0,
+          "price": 0.0,
+          "discount": 0.0,
+          "profit": 0.0,
+          "margin": 0.0
+        },
+        "all_insights": [
+          {
+            "text": "Data quality is low. Insights may not be reliable.",
+            "priority": "high",
+            "impact": "negative",
+            "confidence": 0.4
+          },
+          {
+            "text": "Order values are lower than expected.",
+            "priority": "medium",
+            "impact": "negative",
+            "confidence": 0.7
+          },
+          {
+            "text": "'Facebook Ads' is the lowest performing category.",
+            "priority": "medium",
+            "impact": "negative",
+            "confidence": 0.75
+          },
+          {
+            "text": "'Google Search' is the best performing category.",
+            "priority": "medium",
+            "impact": "positive",
+            "confidence": 0.8
+          },
+          {
+            "text": "Not enough data to determine a sales trend.",
+            "priority": "low",
+            "impact": "neutral",
+            "confidence": 0.4
+          }
+        ],
+        "visualization": {
+          "type": "bar",
+          "title": "Top Categories by Revenue",
+          "data": [
+            {
+              "name": "Google Search",
+              "value": 44300.0
+            },
+            {
+              "name": "Facebook Ads",
+              "value": 22600.0
+            },
+            {
+              "name": "Instagram Reels",
+              "value": 32600.0
+            }
+          ],
+          "description": "Comparison of performance across primary business categories."
+        },
+        "_fallback": false
+      },
+      "predictions": {
+        "prediction_score": 0.54,
+        "confidence": 0.9,
+        "probabilities": {
+          "positive": 0.54,
+          "negative": 0.46
+        },
+        "_fallback": false
+      },
+      "decisions": {
+        "action": "Improve data collection before acting on these insights.",
+        "strategy": "Improve data collection before acting on these insights.",
+        "score": 0.8,
+        "impact": 0.9,
+        "confidence": 0.8,
+        "feasibility": 0.8,
+        "explanation": "Low data quality reduces the reliability of all decisions.",
+        "ai_strategic_advice": "Strategic reasoning engine reached a safe state.",
+        "all_decisions": [
+          {
+            "action": "Improve data collection before acting on these insights.",
+            "type": "strategy",
+            "priority": "high",
+            "based_on": "Data quality is low. Insights may not be reliable.",
+            "reason": "Low data quality reduces the reliability of all decisions.",
+            "expected_impact": "More accurate insights and safer decisions going forward.",
+            "confidence": 0.8
+          }
+        ],
+        "_fallback": false
+      },
+      "simulation": {
+        "projected_roi": 1.888,
+        "risk_level": "low",
+        "recommendation": "Execute 'Improve data collection before acting on these insights.' with low risk profile. Projected ROI: 1.89x based on decision score 0.800.",
+        "decision_echo": {
+          "action": "Improve data collection before acting on these insights.",
+          "strategy": "Improve data collection before acting on these insights.",
+          "score": 0.8,
+          "impact": 0.9,
+          "confidence": 0.8,
+          "feasibility": 0.8,
+          "explanation": "Low data quality reduces the reliability of all decisions.",
+          "ai_strategic_advice": "Strategic reasoning engine reached a safe state.",
+          "all_decisions": [
+            {
+              "action": "Improve data collection before acting on these insights.",
+              "type": "strategy",
+              "priority": "high",
+              "based_on": "Data quality is low. Insights may not be reliable.",
+              "reason": "Low data quality reduces the reliability of all decisions.",
+              "expected_impact": "More accurate insights and safer decisions going forward.",
+              "confidence": 0.8
+            }
+          ],
+          "_fallback": false
+        },
+        "_fallback": false
+      },
+      "metadata": {
+        "mode": "STRICT",
+        "DataIngestion_status": "SUCCESS",
+        "DataIngestion_ms": 2.34,
+        "FeatureEngineering_status": "SUCCESS",
+        "FeatureEngineering_ms": 1.59,
+        "InsightGeneration_status": "SUCCESS",
+        "InsightGeneration_ms": 15166.13,
+        "Prediction_status": "SUCCESS",
+        "Prediction_ms": 1.06,
+        "Decision_status": "SUCCESS",
+        "Decision_ms": 9483.29,
+        "Simulation_status": "SUCCESS",
+        "Simulation_ms": 0.97
+      }
+    },
+    "timestamp": 1777190758.471907
+  },
+  "9777a24c-c9a3-45b7-b6e2-ea69b6bece6d": {
+    "state": {
+      "session_id": "9777a24c-c9a3-45b7-b6e2-ea69b6bece6d",
+      "status": "COMPLETED",
+      "started_at": "2026-04-26T08:14:08.915850Z",
+      "completed_at": "2026-04-26T08:14:35.141394Z",
+      "raw_data": {
+        "source": "workflow_engine",
+        "record_count": 15,
+        "fields": [
+          "category",
+          "date",
+          "discount",
+          "margin",
+          "orders",
+          "price",
+          "product",
+          "profit",
+          "revenue",
+          "sales"
+        ],
+        "processed_data": [
+          {
+            "sales": 0.0,
+            "revenue": 8200.0,
+            "orders": 145.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4100.0,
+            "orders": 98.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5200.0,
+            "orders": 112.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-01"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 7900.0,
+            "orders": 138.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4400.0,
+            "orders": 105.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5600.0,
+            "orders": 120.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-02"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 9100.0,
+            "orders": 160.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 3800.0,
+            "orders": 85.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 6500.0,
+            "orders": 142.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-03"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 8600.0,
+            "orders": 152.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 4800.0,
+            "orders": 115.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 7200.0,
+            "orders": 158.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-04"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 10500.0,
+            "orders": 185.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Google Search",
+            "date": "2024-01-05"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 5500.0,
+            "orders": 130.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Facebook Ads",
+            "date": "2024-01-05"
+          },
+          {
+            "sales": 0.0,
+            "revenue": 8100.0,
+            "orders": 182.0,
+            "price": 0.0,
+            "discount": 0.0,
+            "profit": 0.0,
+            "margin": 0.0,
+            "product": null,
+            "category": "Instagram Reels",
+            "date": "2024-01-05"
+          }
+        ],
+        "metrics": {
+          "total_sales": 0.0,
+          "total_revenue": 99500.0,
+          "total_profit": 0.0,
+          "total_orders": 2027.0,
+          "average_sales": 0.0,
+          "avg_order_value": 49.09,
+          "avg_margin": 0.0,
+          "trend": "insufficient_data",
+          "weekend_vs_weekday": {
+            "weekday_avg_sales": 0.0,
+            "weekend_avg_sales": null,
+            "weekday_avg_revenue": 6633.33,
+            "weekend_avg_revenue": null,
+            "higher_performer": "unavailable"
+          }
+        },
+        "category_performance": {
+          "Google Search": {
+            "total_sales": 0.0,
+            "total_revenue": 44300.0,
+            "total_profit": 0.0
+          },
+          "Facebook Ads": {
+            "total_sales": 0.0,
+            "total_revenue": 22600.0,
+            "total_profit": 0.0
+          },
+          "Instagram Reels": {
+            "total_sales": 0.0,
+            "total_revenue": 32600.0,
+            "total_profit": 0.0
+          }
+        },
+        "data_quality": 29,
+        "raw": {
+          "sales": 0.0,
+          "revenue": 8200.0,
+          "orders": 145.0,
+          "price": 0.0,
+          "discount": 0.0,
+          "profit": 0.0,
+          "margin": 0.0,
+          "product": null,
+          "category": "Google Search",
+          "date": "2024-01-01"
+        },
+        "_fallback": false
+      },
+      "insights": {
+        "insights_summary": "Data quality is low. Insights may not be reliable.",
+        "top_signal": "none",
+        "confidence": 0.9,
+        "anomaly_detected": true,
+        "context": "A critical data integrity issue is evident, with $99,500 in revenue from over 2,000 orders reported alongside zero profit and sales figures,",
+        "metrics_snapshot": {
+          "sales": 0.0,
+          "revenue": 8200.0,
+          "orders": 145.0,
+          "price": 0.0,
+          "discount": 0.0,
+          "profit": 0.0,
+          "margin": 0.0
+        },
+        "all_insights": [
+          {
+            "text": "Data quality is low. Insights may not be reliable.",
+            "priority": "high",
+            "impact": "negative",
+            "confidence": 0.4
+          },
+          {
+            "text": "Order values are lower than expected.",
+            "priority": "medium",
+            "impact": "negative",
+            "confidence": 0.7
+          },
+          {
+            "text": "'Facebook Ads' is the lowest performing category.",
+            "priority": "medium",
+            "impact": "negative",
+            "confidence": 0.75
+          },
+          {
+            "text": "'Google Search' is the best performing category.",
+            "priority": "medium",
+            "impact": "positive",
+            "confidence": 0.8
+          },
+          {
+            "text": "Not enough data to determine a sales trend.",
+            "priority": "low",
+            "impact": "neutral",
+            "confidence": 0.4
+          }
+        ],
+        "visualization": {
+          "type": "bar",
+          "title": "Top Categories by Revenue",
+          "data": [
+            {
+              "name": "Google Search",
+              "value": 44300.0
+            },
+            {
+              "name": "Facebook Ads",
+              "value": 22600.0
+            },
+            {
+              "name": "Instagram Reels",
+              "value": 32600.0
+            }
+          ],
+          "description": "Comparison of performance across primary business categories."
+        },
+        "_fallback": false
+      },
+      "predictions": {
+        "prediction_score": 0.54,
+        "confidence": 0.9,
+        "probabilities": {
+          "positive": 0.54,
+          "negative": 0.46
+        },
+        "_fallback": false
+      },
+      "decisions": {
+        "action": "Improve data collection before acting on these insights.",
+        "strategy": "Improve data collection before acting on these insights.",
+        "score": 0.8,
+        "impact": 0.9,
+        "confidence": 0.8,
+        "feasibility": 0.8,
+        "explanation": "Low data quality reduces the reliability of all decisions.",
+        "ai_strategic_advice": "Strategic reasoning engine reached a safe state.",
+        "all_decisions": [
+          {
+            "action": "Improve data collection before acting on these insights.",
+            "type": "strategy",
+            "priority": "high",
+            "based_on": "Data quality is low. Insights may not be reliable.",
+            "reason": "Low data quality reduces the reliability of all decisions.",
+            "expected_impact": "More accurate insights and safer decisions going forward.",
+            "confidence": 0.8
+          }
+        ],
+        "_fallback": false
+      },
+      "simulation": {
+        "projected_roi": 1.888,
+        "risk_level": "low",
+        "recommendation": "Execute 'Improve data collection before acting on these insights.' with low risk profile. Projected ROI: 1.89x based on decision score 0.800.",
+        "decision_echo": {
+          "action": "Improve data collection before acting on these insights.",
+          "strategy": "Improve data collection before acting on these insights.",
+          "score": 0.8,
+          "impact": 0.9,
+          "confidence": 0.8,
+          "feasibility": 0.8,
+          "explanation": "Low data quality reduces the reliability of all decisions.",
+          "ai_strategic_advice": "Strategic reasoning engine reached a safe state.",
+          "all_decisions": [
+            {
+              "action": "Improve data collection before acting on these insights.",
+              "type": "strategy",
+              "priority": "high",
+              "based_on": "Data quality is low. Insights may not be reliable.",
+              "reason": "Low data quality reduces the reliability of all decisions.",
+              "expected_impact": "More accurate insights and safer decisions going forward.",
+              "confidence": 0.8
+            }
+          ],
+          "_fallback": false
+        },
+        "_fallback": false
+      },
+      "metadata": {
+        "mode": "STRICT",
+        "DataIngestion_status": "SUCCESS",
+        "DataIngestion_ms": 1.8,
+        "FeatureEngineering_status": "SUCCESS",
+        "FeatureEngineering_ms": 1.06,
+        "InsightGeneration_status": "SUCCESS",
+        "InsightGeneration_ms": 16503.52,
+        "Prediction_status": "SUCCESS",
+        "Prediction_ms": 1.22,
+        "Decision_status": "SUCCESS",
+        "Decision_ms": 9693.22,
+        "Simulation_status": "SUCCESS",
+        "Simulation_ms": 0.97
+      }
+    },
+    "timestamp": 1777191275.1419003
   }
 }
