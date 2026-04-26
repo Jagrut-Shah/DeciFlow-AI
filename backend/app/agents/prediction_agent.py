@@ -38,7 +38,7 @@ Output shape:
     }
 """
 
-from base_agent import BaseAgent
+from app.agents.base_agent import BaseAgent
 
 
 class PredictionAgent(BaseAgent):
@@ -84,6 +84,43 @@ class PredictionAgent(BaseAgent):
         predictions += self._day_type_prediction(metrics.get("weekend_vs_weekday", {}))
         predictions += self._category_prediction(category_performance)
         predictions += self._quality_prediction(data_quality)
+
+        # HYBRID LOGIC: Add AI Predictions
+        try:
+            from app.infrastructure.llm.vertex_adapter import VertexAdapter
+            from app.core.config import settings
+            
+            is_fast_mode = input_data.get("mode") == "FAST"
+            has_credentials = settings.GOOGLE_APPLICATION_CREDENTIALS_PATH or settings.GOOGLE_API_KEY
+            
+            if not is_fast_mode and has_credentials:
+                adapter = VertexAdapter()
+                prompt = f"""
+                Analyze these business metrics and provide 2-3 specific forecasts for the next period.
+                Focus on potential risks or growth opportunities.
+                
+                METRICS: {metrics}
+                
+                RETURN JSON FORMAT ONLY:
+                [
+                  {{
+                    "text": "What is likely to happen",
+                    "reason": "Why this prediction is made",
+                    "confidence": 0.0-1.0,
+                    "assumption": "Condition under which this holds"
+                  }}
+                ]
+                """
+                response = await adapter.generate_content(prompt, model_type="flash")
+                if response:
+                    import json
+                    import re
+                    json_match = re.search(r'\[.*\]', response, re.DOTALL)
+                    if json_match:
+                        ai_preds = json.loads(json_match.group(0))
+                        predictions = ai_preds + predictions
+        except Exception as e:
+            self._log(f"AI Predictions failed: {e}")
 
         # Signal-based confidence boost — no string matching.
         # A strong directional trend slightly increases trend prediction confidence.

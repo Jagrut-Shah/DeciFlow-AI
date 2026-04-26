@@ -1,47 +1,33 @@
 import logging
-# import vertexai
-# from vertexai.generative_models import GenerativeModel
 from app.domain.interfaces.llm_interface import ILLMService
 from app.infrastructure.ai.models import LLMConfig, NormalizedLLMResponse
-from app.infrastructure.ai.retry_wrapper import with_retry
+from app.infrastructure.llm.vertex_adapter import VertexAdapter
 
 logger = logging.getLogger(__name__)
 
 class GeminiService(ILLMService):
-    def __init__(self, project_id: str = "placeholder_project", location: str = "us-central1"):
-        self.project_id = project_id
-        self.location = location
-        # vertexai.init(project=project_id, location=location)
-
-    async def _execute_call(self, prompt: str, config: LLMConfig) -> NormalizedLLMResponse:
-        # Mocking actual API call to Vertex AI for architectural stability without keys
-        # In prod:
-        # model = GenerativeModel(config.model_name)
-        # response = await model.generate_content_async(prompt, generation_config={"temperature": config.temperature})
-        
-        logger.info(f"Mocking Vertex AI call to {config.model_name}...")
-        import asyncio
-        await asyncio.sleep(0.5) # Simulate network io
-        
-        # Simulating generic occasional failures for retry demonstration
-        import random
-        if random.random() < 0.2:
-            raise ConnectionError("Simulated random Vertex connection drop")
-            
-        return NormalizedLLMResponse(
-            content=f"Processed by {config.model_name}. Context: {prompt[:30]}...",
-            tokens_used=145,
-            finish_reason="STOP",
-            raw_response={"mock": "data"}
-        )
+    def __init__(self, project_id: str = None, location: str = None):
+        self.adapter = VertexAdapter()
 
     async def generate_response(self, prompt: str, config: LLMConfig) -> NormalizedLLMResponse:
-        logger.info(f"Executing Gemini Service generation. Config: temp={config.temperature}")
-        return await with_retry(
-            self._execute_call,
+        logger.info(f"Executing Gemini Service generation via VertexAdapter. Model: {config.model_name}")
+        
+        # Mapping LLMConfig to adapter parameters
+        model_type = "pro" if "pro" in config.model_name.lower() else "flash"
+        
+        response_text = await self.adapter.generate_content(
             prompt=prompt,
-            config=config,
-            max_retries=3,
-            base_delay=1.0,
-            timeout=10.0
+            model_type=model_type,
+            temperature=config.temperature,
+            max_tokens=config.max_tokens
+        )
+        
+        if not response_text:
+            response_text = "I'm sorry, I couldn't generate a response. Please check backend logs."
+
+        return NormalizedLLMResponse(
+            content=response_text,
+            tokens_used=0, # Adapter doesn't currently return token count
+            finish_reason="STOP",
+            raw_response={"source": "VertexAdapter"}
         )

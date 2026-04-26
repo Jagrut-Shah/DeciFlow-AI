@@ -42,7 +42,7 @@ Output shape:
     }
 """
 
-from base_agent import BaseAgent
+from app.agents.base_agent import BaseAgent
 
 
 # Data quality band thresholds (inclusive lower bound).
@@ -103,25 +103,58 @@ class InsightAgent(BaseAgent):
 
         insights = insights[:6]
 
-        # HYBRID LOGIC: Add AI Narrative
+        # HYBRID LOGIC: Add AI Narrative and Structured Insights
         ai_narrative = "AI narrative generation skipped (Vertex AI not configured)."
+        visualization = None
         try:
             from app.infrastructure.llm.vertex_adapter import VertexAdapter
             from app.core.config import settings
             
-            if settings.GOOGLE_CLOUD_PROJECT != "your-project-id":
+            is_fast_mode = input_data.get("mode") == "FAST"
+            has_credentials = settings.GOOGLE_APPLICATION_CREDENTIALS_PATH or settings.GOOGLE_API_KEY
+            
+            if not is_fast_mode and has_credentials:
                 adapter = VertexAdapter()
-                # Run narrative generation in background or await it
-                ai_narrative = await adapter.generate_structured_insight(metrics) or ai_narrative
+                
+                # 1. Generate dynamic structured insights from LLM
+                ai_insights = await adapter.generate_insights_structured(metrics, category_performance)
+                
+                # CRITICAL: If we have AI insights, we ONLY use them to ensure a high-fidelity experience.
+                # If we don't have them, we keep the rule-based ones.
+                if ai_insights and len(ai_insights) > 0:
+                    for i in ai_insights:
+                        i["confidence"] = round(i.get("confidence", 0.9), 2)
+                    insights = ai_insights
+                
+                # 2. Generate strategic narrative
+                ai_narrative = await adapter.generate_structured_insight({
+                    "metrics": metrics,
+                    "top_categories": list(category_performance.keys())[:3]
+                }) or ai_narrative
+                
+                # 3. Generate dynamic visualization configuration
+                visualization = await adapter.generate_visualization_config(metrics, category_performance)
         except Exception as e:
-             self._log(f"AI Narrative failed: {e}")
+             self._log(f"AI Synthesis failed: {e}")
+
+        # Final sort and trim
+        insights.sort(
+            key=lambda i: (
+                _priority_rank.get(i.get("priority", "low"), 0),
+                _impact_rank.get(i.get("impact", "neutral"), 0),
+            ),
+            reverse=True,
+        )
+        insights = insights[:10] # Allow slightly more insights if they are AI-generated
 
         return {
             "status":       "ok",
             "agent":        self.name,
             "main_insight": self._select_main_insight(insights),
             "insights":     insights,
-            "ai_narrative": ai_narrative
+            "all_insights": insights, # Add alias for easier mapping
+            "ai_narrative": ai_narrative,
+            "visualization": visualization
         }
 
     # ------------------------------------------------------------------

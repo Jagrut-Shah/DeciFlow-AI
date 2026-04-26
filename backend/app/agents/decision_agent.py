@@ -41,7 +41,7 @@ Output shape:
 """
 
 import re
-from base_agent import BaseAgent
+from app.agents.base_agent import BaseAgent
 
 
 # Decision count bounds.
@@ -99,22 +99,47 @@ class DecisionAgent(BaseAgent):
         if not decisions:
             decisions = [self._no_action_decision()]
 
-        # HYBRID LOGIC: Add AI Strategic Advisory
-        ai_advice = "AI advisory skipped (Vertex AI not configured)."
+        # HYBRID LOGIC: Add AI Strategic Advisory and Structured Decisions
+        ai_advice = "AI analysis in progress..."
         try:
             from app.infrastructure.llm.vertex_adapter import VertexAdapter
             from app.core.config import settings
             
-            if settings.GOOGLE_CLOUD_PROJECT != "your-project-id" and insights:
+            is_fast_mode = input_data.get("mode") == "FAST"
+            
+            if not is_fast_mode:
                 adapter = VertexAdapter()
-                ai_advice = await adapter.generate_strategic_advice(insights) or ai_advice
+                
+                # Use consolidated AI call for efficiency and reliability
+                package = await adapter.generate_decision_package(insights, predictions)
+                ai_decisions = package.get("decisions", [])
+                
+                if ai_decisions and len(ai_decisions) > 0:
+                    # CRITICAL: If we have AI decisions, we ONLY use them to ensure a high-fidelity experience.
+                    for d in ai_decisions:
+                        d["confidence"] = round(d.get("confidence", 0.95), 2)
+                    decisions = ai_decisions
+                
+                # Update strategic advice from package
+                ai_advice = package.get("advice") or "AI Strategic Advisory completed successfully."
+            else:
+                ai_advice = "AI Strategic Advisory skipped (FAST mode or missing credentials)."
         except Exception as e:
-             self._log(f"AI Strategic Advisory failed: {e}")
+             err_msg = f"AI Strategic Advisory failed: {str(e)}"
+             self._log(err_msg)
+             ai_advice = err_msg
+
+        # Re-sort and deduplicate after adding AI decisions
+        decisions = self._deduplicate_by_type(decisions)
+        _rank = {"high": 3, "medium": 2, "low": 1}
+        decisions.sort(key=lambda d: _rank.get(d.get("priority", "low"), 0), reverse=True)
+        decisions = decisions[:_MAX_DECISIONS]
 
         return {
-            "status":    "ok",
-            "agent":     self.name,
-            "decisions": decisions,
+            "status":              "ok",
+            "agent":               self.name,
+            "decisions":           decisions,
+            "all_decisions":       decisions, # Alias for easier mapping
             "ai_strategic_advice": ai_advice
         }
 

@@ -80,12 +80,21 @@ class WorkflowEngine:
         
         async def _run_data(data):
             return await self.data.process_raw_data("workflow_engine", data)
+
+        async def _run_insights(features):
+            # Combine extracted features with raw data metrics for rich insights
+            return await self.insight.generate_insights({
+                "features": features,
+                "raw_data": state.raw_data,
+                "mode": active_mode.name
+            })
             
         async def _run_decision(predictions):
             return await self.decision.orchestrate_decision({
                 "session_id": state.session_id,
                 "insights": state.insights,
                 "predictions": predictions,
+                "mode": active_mode.name
             })
 
         steps = [
@@ -103,7 +112,7 @@ class WorkflowEngine:
             ),
             PipelineStep(
                 name="InsightGeneration",
-                func=self.insight.generate_insights,
+                func=_run_insights,
                 input_key="features",
                 output_key="insights",
             ),

@@ -9,9 +9,9 @@ export default function Button({ variant = 'primary', className = '', children, 
   const baseStyles = "px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ease-out active:scale-95 flex items-center justify-center gap-2";
   
   const variants = {
-    primary: "bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-900 dark:text-white hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] hover:scale-105",
-    secondary: "bg-[#1E253A] text-slate-900 dark:text-white hover:bg-[#2A344F] border border-[#2E364F] hover:shadow-lg",
-    ghost: "text-gray-400 hover:text-slate-900 dark:text-white hover:bg-white/5",
+    primary: "bg-sapphire text-white hover:shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:scale-105",
+    secondary: "bg-ice-blue text-sapphire border border-sapphire/20 hover:bg-sapphire/10 hover:shadow-lg",
+    ghost: "text-muted-text hover:text-navy dark:text-white hover:bg-ice-blue dark:hover:bg-white/5",
   };
 
   return (

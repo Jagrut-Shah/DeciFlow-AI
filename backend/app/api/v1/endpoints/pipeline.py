@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, Query, BackgroundTasks
+from fastapi import APIRouter, Depends, Query, BackgroundTasks, UploadFile, File, HTTPException
 from typing import Optional
 import uuid
 
 from app.core.config import settings
-from app.core.dependencies import get_workflow_engine, get_task_queue, get_result_store
+from app.core.dependencies import get_workflow_engine, get_task_queue, get_result_store, get_data_service
+from app.domain.interfaces.data_service import IDataService
 from app.core.exceptions import CustomException
 from app.orchestration.engine import WorkflowEngine
 from app.orchestration.models import ExecutionMode
@@ -103,3 +104,48 @@ async def get_pipeline_result(
         data=state.model_dump(),
         message="Result retrieved successfully"
     )
+
+@router.post("/execute-from-file", response_model=APIResponse)
+async def execute_from_file(
+    file: UploadFile = File(...),
+    engine: WorkflowEngine = Depends(get_workflow_engine),
+    data_svc: IDataService = Depends(get_data_service)
+):
+    """
+    Uploads a dataset and immediately runs the full AI pipeline (Data -> Feature -> Insight -> Prediction -> Decision -> Simulation).
+    """
+    session_id = str(uuid.uuid4())
+    
+    # 1. Read and Parse
+    content = await file.read()
+    if file.filename.endswith(".csv"):
+        parsed = data_svc.parse_csv_content(content)
+    elif file.filename.endswith(".json"):
+        parsed = data_svc.parse_json_content(content)
+    else:
+        raise HTTPException(status_code=400, detail="Unsupported file type. Use .csv or .json")
+
+    if "error" in parsed:
+        raise HTTPException(status_code=422, detail=f"Parsing error: {parsed['error']}")
+
+    # 2. Extract payload for the pipeline
+    if not parsed.get("data") and not isinstance(parsed, dict):
+        raise HTTPException(status_code=400, detail="Empty or invalid dataset provided.")
+
+    # 3. Execute Pipeline
+    try:
+        state = await engine.execute_pipeline(
+            session_id=session_id,
+            payload=parsed
+        )
+        count = len(parsed.get("data", []))
+        return success_response(
+            data=state.model_dump(),
+            message=f"Pipeline integrated successfully. File: {file.filename}, Records processed: {count}"
+        )
+    except Exception as e:
+        raise CustomException(
+            message=f"Integrated pipeline failure: {str(e)}",
+            status_code=500,
+            error_code="PIPELINE_INTEGRATION_ERROR"
+        )

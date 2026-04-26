@@ -1,0 +1,19 @@
+{
+  "type": "bar",
+  "title": "Top Categories by Revenue",
+  "data": [
+    {
+      "name": "Warehouse A",
+      "value": 0
+    },
+    {
+      "name": "Warehouse B",
+      "value": 0
+    },
+    {
+      "name": "Warehouse C",
+      "value": 0
+    }
+  ],
+  "description": "Comparison of performance across primary business categories."
+}

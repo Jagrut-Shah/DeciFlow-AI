@@ -21,3 +21,7 @@ pytest-cov>=5.0.0
 google-cloud-aiplatform
 google-generativeai
 google-genai
+
+# File Upload Support
+python-multipart>=0.0.9
+

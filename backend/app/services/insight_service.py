@@ -25,18 +25,22 @@ logger = logging.getLogger(__name__)
 
 class InsightService(IInsightService):
 
-    async def generate_insights(self, features: Dict[str, Any]) -> Dict[str, Any]:
+    async def generate_insights(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         metrics.increment("pipeline_insights_total")
+
+        # NEW: Handle combined input from WorkflowEngine
+        features = input_data.get("features", input_data)
+        raw_data = input_data.get("raw_data", {})
 
         # BRIDGE: Route to InsightAgent for hybrid (heuristic + Vertex AI) logic
         from app.agents.insight_agent import InsightAgent
         agent = InsightAgent()
         
-        # Format input for agent (numeric features are core)
+        # Format input for agent (prioritise rich metrics from DataAgent)
         agent_input = {
-            "metrics": features.get("numeric", {}),
-            "category_performance": features.get("categories", {}),
-            "data_quality": features.get("data_quality", 100)
+            "metrics": raw_data.get("metrics", features.get("numeric", {})),
+            "category_performance": raw_data.get("category_performance", features.get("categories", {})),
+            "data_quality": raw_data.get("data_quality", features.get("data_quality", 100))
         }
         
         agent_result = await agent.execute(agent_input)
@@ -47,7 +51,7 @@ class InsightService(IInsightService):
             return self._fallback_logic(features)
 
         # Map agent output back to service contract
-        summary = agent_result.get("main_insight", {}).get("message", "Analysis complete.")
+        summary = agent_result.get("main_insight", {}).get("text", "Analysis complete.")
         
         return {
             "insights_summary": summary,
@@ -57,6 +61,7 @@ class InsightService(IInsightService):
             "context": agent_result.get("ai_narrative", summary),
             "metrics_snapshot": features.get("numeric", {}),
             "all_insights": agent_result.get("insights", []),
+            "visualization": agent_result.get("visualization"),
             "_fallback": False,
         }
 

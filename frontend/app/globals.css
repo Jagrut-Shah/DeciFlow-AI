@@ -2,37 +2,100 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+
+    nav, aside, footer, button, .sidebar-link {
+        display: none !important;
+    }
+
+    main {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .simulation-card {
+        border: none !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+}
+
 :root {
-  /* Light Mode - Soft Ivory with elegant contrast */
-  --background: #f8fafc;
-  --foreground: #0f172a; /* Slate 900 for high contrast text */
+  /* Brand Palette from Design Doc */
+  --navy: #1B2B4B;
+  --sapphire: #2563EB;
+  --emerald: #16A87A;
+  --amber: #F59E0B;
+  --alert-red: #E84444;
+  --ice-blue: #F0F4FF;
+  --off-white: #F8F9FA;
+  --white: #FFFFFF;
+  --cool-gray: #E8EDF5;
+  --body-text: #4A5568;
+  --muted-text: #8896A5;
+
+  /* Functional Mappings - Light Mode */
+  --background: var(--off-white);
+  --foreground: var(--navy);
   --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(15, 23, 42, 0.08); /* Darker border for light mode */
-  --panel-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: var(--cool-gray);
+  --panel-bg: var(--white);
   
-  /* Sky / Rose / Amber glows for light mode */
-  --radial-glow-1: rgba(14, 165, 233, 0.12); /* Sky glow */
-  --radial-glow-2: rgba(244, 63, 94, 0.08);  /* Rose glow */
-  --radial-glow-3: rgba(245, 158, 11, 0.08); /* Amber glow */
+  /* Brand Radial Glows */
+  --radial-glow-1: rgba(37, 99, 235, 0.08); /* Sapphire Blue */
+  --radial-glow-2: rgba(22, 168, 122, 0.05); /* Emerald */
+  --radial-glow-3: rgba(245, 158, 11, 0.05); /* Amber */
 }
 
 .dark {
-  /* Dark Mode - Neutral Slate Black */
-  --background: #0b0f19; /* Deep neutral/slate dark */
+  /* Maintaining Dark Mode with Brand Accents */
+  --background: #0b0f19;
   --foreground: #f8fafc;
   --glass-bg: rgba(255, 255, 255, 0.02);
   --glass-border: rgba(255, 255, 255, 0.08);
   --panel-bg: rgba(15, 20, 30, 0.6);
   
-  /* Sky / Rose / Amber glows for dark mode */
-  --radial-glow-1: rgba(14, 165, 233, 0.15);
-  --radial-glow-2: rgba(244, 63, 94, 0.15);
+  --radial-glow-1: rgba(37, 99, 235, 0.15);
+  --radial-glow-2: rgba(22, 168, 122, 0.15);
   --radial-glow-3: rgba(245, 158, 11, 0.15);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
+  /* Brand Colors */
+  --color-navy: var(--navy);
+  --color-sapphire: var(--sapphire);
+  --color-emerald: var(--emerald);
+  --color-amber: var(--amber);
+  --color-alert-red: var(--alert-red);
+  --color-ice-blue: var(--ice-blue);
+  --color-off-white: var(--off-white);
+  --color-cool-gray: var(--cool-gray);
+  --color-body-text: var(--body-text);
+  --color-muted-text: var(--muted-text);
+
+  /* Functional Aliases */
+  --color-primary: var(--sapphire);
+  --color-success: var(--emerald);
+  --color-warning: var(--amber);
+  --color-error: var(--alert-red);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -59,11 +122,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(14, 165, 233, 0.3); /* Sky colored thumb */
+  background: rgba(37, 99, 235, 0.3); /* Sapphire colored thumb */
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(14, 165, 233, 0.6);
+  background: rgba(37, 99, 235, 0.6);
 }
 
 .glass-panel {
@@ -79,11 +142,11 @@ body {
 }
 
 .text-glow {
-  text-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+  text-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
 }
 
 .accent-glow {
-  filter: drop-shadow(0 0 12px rgba(14, 165, 233, 0.5));
+  filter: drop-shadow(0 0 12px rgba(22, 168, 122, 0.5));
 }
 
 @keyframes float {
@@ -103,6 +166,6 @@ body {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(14, 165, 233, 0.3);
+  background-color: rgba(37, 99, 235, 0.3);
   border-radius: 20px;
 }

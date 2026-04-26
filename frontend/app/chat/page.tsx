@@ -5,6 +5,7 @@ import Card from "@/components/Card";
 import { FiSend, FiUser, FiInfo } from "react-icons/fi";
 import { FaRobot } from "react-icons/fa";
 import { apiClient } from "@/services/api";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Message {
     id: number;
@@ -18,11 +19,16 @@ export default function ChatPage() {
     ]);
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         scrollToBottom();
@@ -75,82 +81,136 @@ export default function ChatPage() {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-6rem)] max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="flex flex-col h-[calc(100vh-6rem)] max-w-5xl mx-auto">
+            {/* Header / Context Indicator */}
+            <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="px-6 py-4 border-b border-cool-gray dark:border-white/5 flex items-center justify-between"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-emerald rounded-full animate-pulse shadow-[0_0_8px_rgba(22,168,122,0.8)]"></div>
+                    <span className="text-[10px] font-black text-navy dark:text-white uppercase tracking-[0.2em]">Neural Connection Active</span>
+                </div>
+                <div className="text-[10px] font-bold text-muted-text dark:text-white/20 uppercase tracking-widest">
+                    Kernel 2.5.0-Flash
+                </div>
+            </motion.div>
+
             {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto px-4 py-8 space-y-8 custom-scrollbar">
-                {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} group`}
-                    >
-                        <div className={`flex gap-4 max-w-[85%] md:max-w-[70%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 ${
-                                msg.sender === 'user' 
-                                ? 'bg-slate-100 dark:bg-white/5 border-slate-300 dark:border-white/10 group-hover:bg-slate-200 dark:bg-white/10' 
-                                : 'bg-indigo-500/20 border-indigo-500/30 group-hover:bg-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]'
-                            }`}>
-                                {msg.sender === 'user' ? <FiUser className="text-slate-500 dark:text-gray-400" /> : <FaRobot className="text-indigo-400" />}
+            <div className="flex-1 overflow-y-auto px-6 py-10 space-y-10 custom-scrollbar">
+                <AnimatePresence mode="popLayout">
+                    {messages.map((msg, index) => (
+                        <motion.div
+                            key={msg.id}
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ type: "spring", stiffness: 260, damping: 25 }}
+                            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} group`}
+                        >
+                            <div className={`flex gap-5 max-w-[85%] md:max-w-[75%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                                <motion.div 
+                                    whileHover={{ scale: 1.1, rotate: 5 }}
+                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 shadow-lg ${
+                                        msg.sender === 'user' 
+                                        ? 'bg-white dark:bg-white/5 border-cool-gray dark:border-white/10' 
+                                        : 'bg-sapphire/10 border-sapphire/20 shadow-sapphire/5'
+                                    }`}
+                                >
+                                    {msg.sender === 'user' ? <FiUser size={20} className="text-navy dark:text-white/60" /> : <FaRobot size={22} className="text-sapphire animate-pulse" />}
+                                </motion.div>
+                                
+                                <div className={`
+                                    p-6 rounded-[2rem] shadow-2xl transition-all duration-500 relative group-hover:shadow-sapphire/5
+                                    ${msg.sender === 'user'
+                                         ? 'bg-gradient-to-br from-sapphire via-sapphire to-navy text-white rounded-tr-none shadow-sapphire/20'
+                                         : 'bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 text-navy dark:text-white/80 rounded-tl-none backdrop-blur-3xl'}
+                                `}>
+                                    <p className="leading-relaxed text-[16px] font-medium selection:bg-white/20 whitespace-pre-wrap">{msg.text}</p>
+                                    
+                                    <div className={`absolute bottom-[-20px] ${msg.sender === 'user' ? 'right-0' : 'left-0'} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
+                                        <span className="text-[10px] font-black text-muted-text dark:text-white/20 uppercase tracking-widest">
+                                            {mounted ? new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--:--"}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <div className={`
-                                p-5 rounded-3xl shadow-2xl transition-all duration-500
-                                ${msg.sender === 'user'
-                                    ? 'bg-gradient-to-br from-indigo-600 to-indigo-800 text-slate-900 dark:text-white rounded-tr-none'
-                                    : 'bg-white/[0.03] border border-slate-300 dark:border-white/10 text-slate-700 dark:text-gray-200 rounded-tl-none backdrop-blur-3xl hover:bg-white/[0.05]'}
-                            `}>
-                                <p className="leading-relaxed text-[15px] selection:bg-white/20">{msg.text}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
 
                 {isTyping && (
-                    <div className="flex justify-start">
-                        <div className="flex gap-4 items-center">
-                            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                                <FaRobot className="text-indigo-400/50 animate-pulse" />
+                    <motion.div 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex justify-start"
+                    >
+                        <div className="flex gap-5 items-center">
+                            <div className="w-12 h-12 rounded-2xl bg-sapphire/10 border border-sapphire/20 flex items-center justify-center shrink-0">
+                                <FaRobot size={22} className="text-sapphire/50 animate-pulse" />
                             </div>
-                            <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-gray-400 py-4 px-6 rounded-3xl rounded-tl-none backdrop-blur-md flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 bg-indigo-400/60 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                <span className="w-1.5 h-1.5 bg-indigo-400/60 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                <span className="w-1.5 h-1.5 bg-indigo-400/60 rounded-full animate-bounce"></span>
+                            <div className="bg-white/[0.03] border border-cool-gray dark:border-white/5 py-5 px-8 rounded-[2rem] rounded-tl-none backdrop-blur-md flex items-center gap-3">
+                                <motion.span 
+                                    animate={{ scale: [1, 1.5, 1] }}
+                                    transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                                    className="w-2 h-2 bg-sapphire/40 rounded-full"
+                                ></motion.span>
+                                <motion.span 
+                                    animate={{ scale: [1, 1.5, 1] }}
+                                    transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                                    className="w-2 h-2 bg-sapphire/40 rounded-full"
+                                ></motion.span>
+                                <motion.span 
+                                    animate={{ scale: [1, 1.5, 1] }}
+                                    transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                                    className="w-2 h-2 bg-sapphire/40 rounded-full"
+                                ></motion.span>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 )}
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Hint Box */}
-            <div className="px-6 py-3 flex items-center gap-2 text-slate-500 dark:text-gray-500 text-xs font-semibold uppercase tracking-widest animate-pulse">
-                <FiInfo size={14} />
-                <span>AI uses historical context for enhanced reasoning</span>
-            </div>
-
             {/* Input Area */}
-            <div className="p-6 mb-4">
-                <Card className="p-2 bg-white/[0.02] border-slate-300 dark:border-white/10 backdrop-blur-3xl shadow-2xl rounded-[2.5rem] group focus-within:border-indigo-500/30 transition-all">
-                    <form
-                        onSubmit={handleSend}
-                        className="flex gap-2"
-                    >
-                        <input
-                            type="text"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="Ask DeciFlow AI about your strategy..."
-                            className="flex-1 bg-transparent border-none px-8 py-5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 placeholder:text-slate-600 dark:text-gray-600 text-[16px]"
-                        />
-                        <button
-                            type="submit"
-                            disabled={!inputValue.trim() || isTyping}
-                            className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-slate-900 dark:text-white w-14 h-14 rounded-[1.8rem] flex items-center justify-center transition-all shadow-xl shadow-indigo-600/20 active:scale-90"
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-8"
+            >
+                <div className="relative">
+                    <div className="absolute top-[-30px] left-6 flex items-center gap-2 text-muted-text dark:text-white/20 text-[10px] font-black uppercase tracking-[0.2em] pointer-events-none">
+                        <FiInfo size={12} />
+                        <span>Connected to Intelligence Layer</span>
+                    </div>
+                    
+                    <Card className="p-3 bg-white dark:bg-white/[0.02] border-cool-gray dark:border-white/10 backdrop-blur-3xl shadow-2xl rounded-[3rem] group focus-within:border-sapphire/40 focus-within:shadow-sapphire/5 transition-all duration-500">
+                        <form
+                            onSubmit={handleSend}
+                            className="flex gap-3"
                         >
-                            <FiSend size={20} />
-                        </button>
-                    </form>
-                </Card>
-            </div>
+                            <input
+                                type="text"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                placeholder="Query the system intelligence..."
+                                className="flex-1 bg-transparent border-none px-10 py-6 text-navy dark:text-white focus:outline-none focus:ring-0 placeholder:text-muted-text/50 font-medium text-[17px]"
+                            />
+                            <motion.button
+                                whileHover={{ scale: 1.05, x: 2 }}
+                                whileTap={{ scale: 0.95 }}
+                                type="submit"
+                                disabled={!inputValue.trim() || isTyping}
+                                className="bg-gradient-to-br from-sapphire to-navy hover:shadow-sapphire/30 disabled:opacity-20 text-white w-16 h-16 rounded-[2rem] flex items-center justify-center transition-all shadow-2xl shadow-sapphire/20"
+                            >
+                                <FiSend size={22} className={inputValue.trim() ? "translate-x-0.5 -translate-y-0.5" : ""} />
+                            </motion.button>
+                        </form>
+                    </Card>
+                </div>
+            </motion.div>
         </div>
     );
-}
+}
+

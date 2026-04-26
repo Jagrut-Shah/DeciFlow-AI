@@ -115,6 +115,7 @@ class VertexAdapter:
                     max_output_tokens=max_tokens
                 )
             )
+            logger.info(f"Gemini Finish Reason: {response.candidates[0].finish_reason}")
             return response.text
 
         except Exception as e:
@@ -129,7 +130,8 @@ class VertexAdapter:
         prompt = f"""
         You are a senior business analyst for DeciFlow AI.
         Analyze the following structured metrics and provide a concise, high-impact narrative summary (2-3 sentences).
-        Focus on identifying the 'story' behind the numbers.
+        
+        CRITICAL: Start the summary IMMEDIATELY with the core insight. DO NOT use introductory filler like "Here is your summary" or "Based on the data".
         
         DATA:
         {data}
@@ -137,6 +139,57 @@ class VertexAdapter:
         SUMMARY:
         """
         return await self.generate_content(prompt, model_type="flash")
+
+    async def generate_insights_structured(self, metrics: Dict, categories: Dict) -> List[Dict]:
+        """
+        Generates a list of structured insights from business data using Gemini.
+        Returns a list of dicts: {"text": str, "priority": str, "impact": str, "confidence": float}
+        """
+        prompt = f"""
+        Analyze this business data and provide a JSON list of 3-5 specific insights.
+        Focus on trends, category performance, and any anomalies.
+        
+        METRICS: {metrics}
+        CATEGORIES: {categories}
+        
+        RETURN JSON FORMAT ONLY:
+        [
+          {{
+            "text": "Clear observation about the data",
+            "priority": "high" | "medium" | "low",
+            "impact": "positive" | "negative" | "neutral",
+            "confidence": 0.0-1.0
+          }}
+        ]
+        """
+        try:
+            response = await self.generate_content(prompt, model_type="flash", max_tokens=1000)
+            if not response:
+                return []
+            
+            # Robust JSON extraction
+            import json
+            import re
+            
+            # Look for JSON block within markdown if present
+            cleaned = response.strip()
+            if "```json" in cleaned:
+                cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+            elif "```" in cleaned:
+                cleaned = cleaned.split("```")[1].split("```")[0].strip()
+                
+            json_match = re.search(r'\[.*\]', cleaned, re.DOTALL)
+            if json_match:
+                return json.loads(json_match.group(0))
+            
+            # Fallback to direct load if no markers but valid string
+            try:
+                return json.loads(cleaned)
+            except:
+                return []
+        except Exception as e:
+            logger.error(f"Failed to generate structured insights: {e}")
+            return []
 
     async def generate_strategic_advice(self, insights: List[Dict]) -> Optional[str]:
         """
@@ -152,4 +205,152 @@ class VertexAdapter:
         
         STRATEGY:
         """
-        return await self.generate_content(prompt, model_type="pro", temperature=0.7)
+        return await self.generate_content(prompt, model_type="flash", temperature=0.7)
+
+    async def generate_decision_package(self, insights: List[Dict], predictions: List[Dict]) -> Dict:
+        """
+        Consolidates structured decisions and strategic advice into a single AI call.
+        Returns {"decisions": List[Dict], "advice": str}
+        """
+        prompt = f"""
+        You are a Chief Decision Officer and Strategy Lead.
+        Based on these business insights and performance predictions, provide both structured actions and long-term strategic advice.
+        
+        INSIGHTS: {insights}
+        PREDICTIONS: {predictions}
+        
+        CRITICAL INSTRUCTIONS:
+        1. DO NOT use generic phrases like "Analysis complete" or "Wait for data".
+        2. DO NOT use introductory filler. Start with the strategic insight directly.
+        3. Provide SPECIFIC strategic advice based on the metrics provided.
+        4. Decisions MUST be actionable (e.g., "Launch loyalty program for Top Categories" instead of "Monitor").
+        
+        TASK 1: Provide 3 structured business decisions.
+        TASK 2: Provide one creative, actionable strategic recommendation (advice).
+        
+        RETURN JSON FORMAT ONLY:
+        {{
+          "decisions": [
+            {{
+              "action": "Specific actionable move",
+              "type": "pricing" | "discount" | "category" | "strategy",
+              "priority": "high" | "medium" | "low",
+              "reason": "Data-backed reasoning",
+              "expected_impact": "Impact with estimated percentage",
+              "confidence": 0.0-1.0
+            }}
+          ],
+          "advice": "The long-form strategic recommendation (minimum 2 sentences, highly specific)"
+        }}
+        """
+        try:
+            response = await self.generate_content(prompt, model_type="flash", temperature=0.6)
+            if not response:
+                return {"decisions": [], "advice": "Awaiting deeper data signals."}
+            
+            import json
+            import re
+            
+            # Robust JSON extraction
+            cleaned = response.strip()
+            if "```json" in cleaned:
+                cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+            elif "```" in cleaned:
+                cleaned = cleaned.split("```")[1].split("```")[0].strip()
+
+            json_match = re.search(r'\{.*\}', cleaned, re.DOTALL)
+            if json_match:
+                pkg = json.loads(json_match.group(0))
+                return {
+                    "decisions": pkg.get("decisions", []),
+                    "advice": pkg.get("advice", "Strategy formulation complete.")
+                }
+            
+            try:
+                pkg = json.loads(cleaned)
+                return {
+                    "decisions": pkg.get("decisions", []),
+                    "advice": pkg.get("advice", "Strategy formulation complete.")
+                }
+            except:
+                return {"decisions": [], "advice": "Strategic reasoning engine reached a safe state."}
+        except Exception as e:
+            logger.error(f"Failed to generate decision package: {e}")
+            return {"decisions": [], "advice": "Strategic reasoning paused due to system signal."}
+    async def generate_visualization_config(self, metrics: Dict, categories: Dict) -> Dict:
+        """
+        Asks Gemini to decide on the best visualization for the given data.
+        Returns a dict: {"type": str, "title": str, "data": List[Dict], "description": str}
+        """
+        prompt = f"""
+        You are a Data Visualization Expert. Given these business metrics and category performance, 
+        select the single most impactful visualization to show a business owner.
+        
+        METRICS: {metrics}
+        CATEGORIES: {categories}
+        
+        CHART TYPES AVAILABLE: "bar", "line", "area", "pie"
+        
+        TASK:
+        1. Choose the best chart type.
+        2. Provide a descriptive title.
+        3. Format the data precisely for Recharts (array of objects with 'name' and 'value' keys).
+        4. Provide a 1-sentence description of what this chart reveals.
+        
+        RETURN JSON FORMAT ONLY:
+        {{
+          "type": "bar" | "line" | "area" | "pie",
+          "title": "Clear Chart Title",
+          "data": [
+            {{ "name": "Category/Date", "value": 123.45 }}
+          ],
+          "description": "Short impactful observation."
+        }}
+        """
+        try:
+            self._ensure_init()
+            model_name = settings.GEMINI_MODELS.get("flash", "gemini-2.5-flash")
+            
+            response = await asyncio.to_thread(
+                self._client.models.generate_content,
+                model=model_name,
+                contents=prompt,
+                config=gen_types.GenerateContentConfig(
+                    temperature=0.2,
+                    response_mime_type="application/json",
+                    response_schema=VisualizationConfig
+                )
+            )
+            
+            if response and response.parsed:
+                return response.parsed.model_dump()
+            
+            # If parsing failed but response text exists, try manual parse as backup
+            if response and response.text:
+                logger.warning(f"Structured parse failed, attempting manual parse of: {response.text[:100]}...")
+                import json
+                import re
+                cleaned = response.text.strip()
+                if "```json" in cleaned:
+                    cleaned = cleaned.split("```json")[1].split("```")[0].strip()
+                json_match = re.search(r'\{.*\}', cleaned, re.DOTALL)
+                if json_match:
+                    return json.loads(json_match.group(0))
+                    
+            return self._fallback_visualization(categories)
+        except Exception as e:
+            logger.error(f"Failed to generate visualization config: {e}", exc_info=True)
+            return self._fallback_visualization(categories)
+
+    def _fallback_visualization(self, categories: Dict) -> Dict:
+        """Safe fallback visualization if LLM fails."""
+        data = []
+        for name, stats in list(categories.items())[:5]:
+            data.append({"name": name, "value": stats.get("total_revenue", 0)})
+        
+        return {
+            "type": "bar",
+            "title": "Top Categories by Revenue",
+            "data": data,
+            "description": "Comparison of performance across primary business categories."
+        }

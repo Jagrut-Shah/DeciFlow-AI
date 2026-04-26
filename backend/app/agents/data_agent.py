@@ -52,14 +52,27 @@ Output shape:
 
 from datetime import datetime
 
-from base_agent import BaseAgent
+from app.agents.base_agent import BaseAgent
 
 
 # Numeric fields that are validated and cleaned on every record.
-NUMERIC_FIELDS = ["sales", "revenue", "orders", "price", "discount"]
+NUMERIC_FIELDS = ["sales", "revenue", "orders", "price", "discount", "profit", "margin"]
 
 # Non-numeric fields copied through as-is (no validation).
 PASSTHROUGH_FIELDS = ["date", "product", "category"]
+
+# Suggestions for mapping common CSV column names to internal fields.
+mapping_suggestions = {
+    "sales":    ["total_sales", "sales_volume", "units_sold", "quantity", "qty", "volume", "ad spend", "ad spend ($)", "ad spend (₹)"],
+    "revenue":  ["total_revenue", "income", "amount", "revenue_usd", "sales_amount", "value", "gross_revenue", "revenue ($)", "revenue (₹)"],
+    "orders":   ["order_count", "transactions", "total_orders", "count", "num_orders", "conversions"],
+    "price":    ["unit_price", "avg_price", "mrp", "cost", "sale_price", "price ($)", "price (₹)"],
+    "discount": ["promo", "rebate", "discount_pct", "off_pct", "reduction", "discount ($)", "discount (₹)"],
+    "profit":   ["earnings", "net_income", "profit_amount", "net_profit", "contribution", "profit ($)", "profit (₹)"],
+    "margin":   ["profit_margin", "operating_margin", "margin_pct", "gp_pct", "roi (%)", "roi"],
+    "product":  ["item_name", "product_name", "description", "sku", "title", "label", "campaign name"],
+    "category": ["department", "group", "category_name", "tag", "industry", "segment", "channel"]
+}
 
 
 class DataAgent(BaseAgent):
@@ -115,24 +128,26 @@ class DataAgent(BaseAgent):
 
         quality = self._quality_score(raw_records, issues)
 
-        # Sort by date before extracting metrics to ensure trend detection is accurate.
-        # Invalid dates are sorted to the beginning to minimize impact on the timeline.
-        def _date_sort_key(r):
-            raw_val = r.get("date")
-            if not raw_val:
-                return datetime.min
-            try:
-                return datetime.strptime(str(raw_val), "%Y-%m-%d")
-            except ValueError:
-                return datetime.min
+        # Pre-parse dates to avoid redundant expensive strptime calls
+        date_cache = {}
+        def _get_date(val):
+            if not val: return datetime.min
+            s_val = str(val)
+            if s_val not in date_cache:
+                try:
+                    date_cache[s_val] = datetime.strptime(s_val, "%Y-%m-%d")
+                except ValueError:
+                    date_cache[s_val] = datetime.min
+            return date_cache[s_val]
 
-        cleaned.sort(key=_date_sort_key)
+        cleaned.sort(key=lambda r: _get_date(r.get("date")))
 
         return {
             "status":               "ok",
             "agent":                self.name,
+            "record_count":         len(cleaned),
             "processed_data":       cleaned,
-            "metrics":              self._extract_metrics(cleaned),
+            "metrics":              self._extract_metrics(cleaned, _get_date),
             "category_performance": self._category_performance(cleaned),
             "data_quality":         quality["score"],
             "issues":               quality["issues"],
@@ -146,18 +161,6 @@ class DataAgent(BaseAgent):
     def _clean(self, records: list, issues: list) -> list:
         """
         Returns a cleaned copy of every valid record.
-
-        Per-record rules:
-        - Non-dict records are skipped entirely (issue logged).
-        - Each numeric field is sanitised via `_clean_numeric()`.
-        - Passthrough and any extra fields are preserved unchanged.
-
-        Args:
-            records (list): Raw input records.
-            issues  (list): Mutable; issues are appended in-place.
-
-        Returns:
-            list[dict]: Cleaned records only.
         """
         cleaned = []
 
@@ -170,8 +173,35 @@ class DataAgent(BaseAgent):
                 )
                 continue
 
-            clean_record = dict(record)  # shallow copy; preserves all original keys
+            # Create a case-insensitive lookup map
+            key_map = {str(k).lower().strip(): k for k in record.keys()}
+            clean_record = {}
 
+            # 1. Map fields using mapping_suggestions (case-insensitive)
+            for target, alternatives in mapping_suggestions.items():
+                val = None
+                # Check if target itself exists (case-insensitive)
+                if target in key_map:
+                    val = record.get(key_map[target])
+                
+                # If not found, try alternatives
+                if val is None:
+                    for alt in alternatives:
+                        alt_lower = alt.lower()
+                        if alt_lower in key_map:
+                            val = record.get(key_map[alt_lower])
+                            if val is not None:
+                                break
+                
+                clean_record[target] = val
+
+            # 2. Copy passthrough fields (case-insensitive)
+            for field in PASSTHROUGH_FIELDS:
+                if field not in clean_record or clean_record[field] is None:
+                    if field in key_map:
+                        clean_record[field] = record.get(key_map[field])
+
+            # 3. Clean numeric fields
             for field in NUMERIC_FIELDS:
                 clean_record[field] = self._clean_numeric(
                     value=clean_record.get(field),
@@ -208,13 +238,23 @@ class DataAgent(BaseAgent):
             return 0.0
 
         if isinstance(value, str):
-            try:
-                value = float(value)
-            except ValueError:
-                issues.append(
-                    f"{label}: '{field}' could not be parsed ('{value}') — defaulted to 0."
-                )
-                return 0.0
+            value = value.strip()
+            # Handle percentages (e.g. "15%" -> 0.15)
+            if value.endswith("%"):
+                try:
+                    value = float(value.replace("%", "")) / 100.0
+                except ValueError:
+                    issues.append(f"{label}: '{field}' invalid percentage ('{value}') — defaulted to 0.")
+                    return 0.0
+            else:
+                try:
+                    # Remove currency symbols and commas
+                    value = float(value.replace("$", "").replace("₹", "").replace(",", ""))
+                except ValueError:
+                    issues.append(
+                        f"{label}: '{field}' could not be parsed ('{value}') — defaulted to 0."
+                    )
+                    return 0.0
 
         if not isinstance(value, (int, float)):
             issues.append(
@@ -234,7 +274,7 @@ class DataAgent(BaseAgent):
     # Step 2 — Metric extraction
     # ------------------------------------------------------------------
 
-    def _extract_metrics(self, records: list) -> dict:
+    def _extract_metrics(self, records: list, get_date_func=None) -> dict:
         """
         Computes all business metrics from cleaned records.
 
@@ -247,6 +287,7 @@ class DataAgent(BaseAgent):
 
         Args:
             records (list): Cleaned records from `_clean()`.
+            get_date_func: Optional helper to get parsed dates.
 
         Returns:
             dict: All computed metrics.
@@ -256,26 +297,35 @@ class DataAgent(BaseAgent):
         sales_vals   = [r["sales"]   for r in records]
         revenue_vals = [r["revenue"] for r in records]
         orders_vals  = [r["orders"]  for r in records]
+        profit_vals  = [r.get("profit", 0.0) for r in records]
+        margin_vals  = [r.get("margin", 0.0) for r in records]
 
         total_sales   = round(sum(sales_vals),   2)
         total_revenue = round(sum(revenue_vals), 2)
-        total_orders  = round(sum(orders_vals),  2)
+        total_profit  = round(sum(profit_vals),  2)
+        
+        sum_orders = sum(orders_vals)
+        total_orders = sum_orders if sum_orders > 0 else n
+        
         average_sales = round(total_sales / n,   2) if n else 0.0
         avg_order_value = (
             round(total_revenue / total_orders, 2) if total_orders > 0 else None
         )
+        avg_margin = round(sum(margin_vals) / n, 2) if n else 0.0
 
         return {
             "total_sales":        total_sales,
             "total_revenue":      total_revenue,
+            "total_profit":       total_profit,
             "total_orders":       total_orders,
             "average_sales":      average_sales,
             "avg_order_value":    avg_order_value,
+            "avg_margin":         avg_margin,
             "trend":              self._detect_trend(sales_vals),
-            "weekend_vs_weekday": self._weekend_vs_weekday(records),
+            "weekend_vs_weekday": self._weekend_vs_weekday(records, get_date_func),
         }
 
-    def _weekend_vs_weekday(self, records: list) -> dict:
+    def _weekend_vs_weekday(self, records: list, get_date_func=None) -> dict:
         """
         Segments records by day type using the "date" field (YYYY-MM-DD)
         and computes average sales and revenue for weekdays and weekends.
@@ -299,9 +349,14 @@ class DataAgent(BaseAgent):
             if not raw_date:
                 continue
             try:
-                dow = datetime.strptime(str(raw_date), "%Y-%m-%d").weekday()
+                if get_date_func:
+                    dt = get_date_func(raw_date)
+                else:
+                    dt = datetime.strptime(str(raw_date), "%Y-%m-%d")
+                
+                dow = dt.weekday()
                 (weekday if dow < 5 else weekend).append(record)
-            except ValueError:
+            except (ValueError, TypeError):
                 continue
 
         def _avg(bucket: list[dict], field: str) -> float | None:
@@ -387,13 +442,16 @@ class DataAgent(BaseAgent):
             category = str(record.get("category") or "Uncategorised").strip().title() or "Uncategorised"
 
             if category not in performance:
-                performance[category] = {"total_sales": 0.0, "total_revenue": 0.0}
+                performance[category] = {"total_sales": 0.0, "total_revenue": 0.0, "total_profit": 0.0}
 
             performance[category]["total_sales"]   = round(
                 performance[category]["total_sales"]   + record.get("sales",   0.0), 2
             )
             performance[category]["total_revenue"] = round(
                 performance[category]["total_revenue"] + record.get("revenue", 0.0), 2
+            )
+            performance[category]["total_profit"]  = round(
+                performance[category]["total_profit"]  + record.get("profit",  0.0), 2
             )
 
         return performance

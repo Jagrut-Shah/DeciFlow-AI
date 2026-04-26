@@ -59,7 +59,23 @@ class DecisionService(IDecisionService):
         from app.agents.decision_agent import DecisionAgent
         agent = DecisionAgent()
 
-        agent_result = await agent.execute(context)
+        # Format input for agent (DecisionAgent expects lists of insights and predictions)
+        insights_data = context.get("insights", {})
+        predictions_data = context.get("predictions", {})
+        
+        agent_input = {
+            "insights": insights_data.get("all_insights", []),
+            "main_insight": {"text": insights_data.get("insights_summary")},
+            "predictions": [
+                {
+                    "text": f"Performance score is {predictions_data.get('prediction_score', 0.5):.2f}",
+                    "confidence": predictions_data.get("confidence", 0.5)
+                }
+            ],
+            "mode": context.get("mode")
+        }
+
+        agent_result = await agent.execute(agent_input)
 
         if agent_result.get("status") != "ok":
             logger.warning(f"DecisionService: Agent failed ({agent_result.get('error')}). Using engine fallback.")
@@ -74,10 +90,11 @@ class DecisionService(IDecisionService):
              return self._fallback("Decision error")
 
         return {
-            "action": top_decision.get("strategy", "NO_ACTION"),
-            "score": 0.8, # Score from agent hierarchy
-            "impact": 0.9 if top_decision.get("priority") == "high" else 0.5,
-            "confidence": 0.9,
+            "action": top_decision.get("action", "NO_ACTION"),
+            "strategy": top_decision.get("strategy", top_decision.get("action", "NO_ACTION")),
+            "score": 0.8, # Base score from agent hierarchy
+            "impact": 0.9 if top_decision.get("priority") == "high" else (0.6 if top_decision.get("priority") == "medium" else 0.3),
+            "confidence": top_decision.get("confidence", 0.85),
             "feasibility": 0.8,
             "explanation": top_decision.get("reason", "No reason provided."),
             "ai_strategic_advice": agent_result.get("ai_strategic_advice"),
