@@ -25,3 +25,5 @@ google-genai
 # File Upload Support
 python-multipart>=0.0.9
 
+# PDF Generation
+reportlab>=4.2.0
