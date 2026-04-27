@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional
 
 class LLMConfig(BaseModel):
-    model_name: str = "gemini-1.5-pro"
+    model_name: str = "gemini-2.5-pro"
     temperature: float = 0.2
     max_tokens: int = 1024
     top_p: float = 0.95

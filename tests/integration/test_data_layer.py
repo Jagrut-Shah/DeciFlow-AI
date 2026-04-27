@@ -1,7 +1,9 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(r"c:\Users\HP\Downloads\DeciFlow AI\backend"))
+# Use relative pathing to locate the backend module
+backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend"))
+sys.path.insert(0, backend_path)
 
 from app.infrastructure.data.bigquery_adapter import BigQueryAdapter
 from app.infrastructure.data.storage_adapter import StorageAdapter

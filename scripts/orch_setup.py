@@ -1,7 +1,8 @@
 import os
 import sys
 
-base_dir = r"c:\Users\HP\Downloads\DeciFlow AI\backend\app"
+# Use dynamic pathing to ensure portability across different development environments
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../backend/app"))
 orch_dir = os.path.join(base_dir, "orchestration")
 os.makedirs(orch_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, "domain", "interfaces"), exist_ok=True)

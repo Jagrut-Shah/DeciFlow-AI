@@ -3,7 +3,8 @@ import os
 import time
 
 # Add backend to path
-sys.path.append(os.path.abspath(r"c:\Users\HP\Downloads\DeciFlow AI\backend"))
+backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend"))
+sys.path.append(backend_path)
 
 from app.services.simulation_service import SimulationService
 

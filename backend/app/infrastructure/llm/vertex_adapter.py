@@ -242,17 +242,52 @@ class VertexAdapter:
           ],
           "advice": "The long-form strategic recommendation (minimum 2 sentences, highly specific)"
         }}
+      
         """
+    async def generate_content(
+        self,
+        prompt: str,
+        model_type: str = "flash",
+        temperature: float = 0.7
+    ) -> str:
         try:
-            response = await self.generate_content(prompt, model_type="flash", temperature=0.6)
-            if not response:
-                return {"decisions": [], "advice": "Awaiting deeper data signals."}
+            # ✅ Initialize model if not already done
+            if not hasattr(self, "model"):
+                import vertexai
+                from vertexai.generative_models import GenerativeModel
+
+                vertexai.init(
+                    project="bio-budget",
+                    location="us-central1"
+                )
+
+                self.model = GenerativeModel("gemini-2.5-flash")
+
+            # ✅ Generate response
+            response = self.model.generate_content(prompt)
+
+            print("RAW CHAT RESPONSE:", response)
+
+            # ✅ Primary extraction
+            if hasattr(response, "text") and response.text:
+                return response.text
+
+            # ✅ Fallback extraction
+            if hasattr(response, "candidates") and response.candidates:
+                return response.candidates[0].content.parts[0].text
+
+            raise Exception("No valid response from Gemini")
+
+        except Exception as e:
+            print("CHAT ERROR:", str(e))
+            raise 
+            
             
             import json
             import re
             
             # Robust JSON extraction
-            cleaned = response.strip()
+            cleaned = response.text.strip()
             if "```json" in cleaned:
                 cleaned = cleaned.split("```json")[1].split("```")[0].strip()
             elif "```" in cleaned:

@@ -5,7 +5,13 @@ import Card from "@/components/Card";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiUploadCloud, FiFile, FiCheckCircle, FiAlertCircle, FiDatabase } from "react-icons/fi";
+import {
+  FiUploadCloud,
+  FiFile,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiDatabase,
+} from "react-icons/fi";
 
 export default function UploadPage() {
     const [file, setFile] = useState<File | null>(null);
@@ -47,22 +53,57 @@ export default function UploadPage() {
             const formData = new FormData();
             formData.append('file', file);
             
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/pipeline/execute-from-file`, {
-                method: 'POST',
-                body: formData,
-            });
+            // Ensure the API URL is constructed safely with fallbacks
+            const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
+            const endpoint = `${baseUrl}/api/v1/pipeline/execute-from-file`;
 
-            if (!response.ok) throw new Error("Neural ingestion failed.");
+            const response = await fetch(
+                endpoint,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+            
+            if (!response.ok) {
+                let detailedErrorMessage = `Status: ${response.status} ${response.statusText}.`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData && errorData.detail) {
+                        // Robustly handle FastAPI validation arrays or custom string errors
+                        if (typeof errorData.detail === 'string') {
+                            detailedErrorMessage = errorData.detail;
+                        } else if (Array.isArray(errorData.detail)) {
+                            detailedErrorMessage = errorData.detail
+                                .map((err: { msg?: string } | string) => (typeof err === 'object' && err !== null && 'msg' in err ? err.msg : JSON.stringify(err)))
+                                .join(", ");
+                        } else {
+                            detailedErrorMessage = JSON.stringify(errorData.detail);
+                        }
+                    } else if (errorData && errorData.message) { // Assuming backend might return 'message' for CustomException
+                        detailedErrorMessage = errorData.message;
+                    }
+                } catch (jsonParseError) {
+                    console.warn("Could not parse error response as JSON:", jsonParseError);
+                }
+                throw new Error(`Neural ingestion failed: ${detailedErrorMessage}`);
+            }
 
             setIsSuccess(true);
             setFile(null);
-            
             setTimeout(() => {
                 router.push('/dashboard');
             }, 2000);
-        } catch (error: any) {
+        } catch (error: unknown) { // Use unknown for better type safety
+            setIsSuccess(false); // Ensure success state is false on error
+            let displayMessage = "An unexpected error occurred during upload.";
+            if (error instanceof Error) {
+                displayMessage = error.message;
+            } else if (typeof error === 'string') {
+                displayMessage = error;
+            }
             console.error("Upload error:", error);
-            alert(`Error: ${error.message}`);
+            alert(`Error: ${displayMessage}`);
         } finally {
             setIsUploading(false);
         }
@@ -237,4 +278,3 @@ export default function UploadPage() {
         </div>
     );
 }
-

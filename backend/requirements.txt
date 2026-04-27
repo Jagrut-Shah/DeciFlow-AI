@@ -25,5 +25,8 @@ google-genai
 # File Upload Support
 python-multipart>=0.0.9
 
-
 reportlab>=4.2.0
+# Auth bypass for development
+python-jose[cryptography]>=3.3.0
+
+

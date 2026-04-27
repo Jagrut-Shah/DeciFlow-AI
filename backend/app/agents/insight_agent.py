@@ -111,8 +111,7 @@ class InsightAgent(BaseAgent):
             from app.core.config import settings
             
             is_fast_mode = input_data.get("mode") == "FAST"
-            has_credentials = settings.GOOGLE_APPLICATION_CREDENTIALS_PATH or settings.GOOGLE_API_KEY
-            
+            has_credentials = True
             if not is_fast_mode and has_credentials:
                 adapter = VertexAdapter()
                 
