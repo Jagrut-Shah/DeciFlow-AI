@@ -66,7 +66,7 @@ def section(title: str):
 
 # ─── Setup: import app internals ───────────────────────────────────────────────
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend")))
 
 from app.core.security import create_access_token, create_refresh_token
 from app.core.sanitizer import sanitize_string, sanitize_dict
@@ -627,7 +627,7 @@ section("5 · ARCHITECTURE CHECK")
 
 def _test11_no_placeholders():
     """Scan all .py files in app/ for pass, TODO, dummy returns, hardcoded secrets."""
-    app_dir = os.path.join(os.path.dirname(__file__), "app")
+    app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend", "app"))
     py_files = glob.glob(os.path.join(app_dir, "**", "*.py"), recursive=True)
 
     FORBIDDEN_PATTERNS = {

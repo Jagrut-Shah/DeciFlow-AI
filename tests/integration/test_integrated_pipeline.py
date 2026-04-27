@@ -6,7 +6,8 @@ BASE_URL = "http://localhost:8000/api/v1"
 
 def test_execute_from_file():
     print("--- Testing /pipeline/execute-from-file ---")
-    file_path = r"c:\Users\HP\Downloads\DeciFlow AI\tests\data\sample_pipeline_data.csv"
+    # Point to the data folder relative to this test file
+    file_path = os.path.join(os.path.dirname(__file__), "../data/sample_pipeline_data.csv")
     
     if not os.path.exists(file_path):
         print(f"Error: File not found at {file_path}")

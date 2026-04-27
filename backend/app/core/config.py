@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     GOOGLE_APPLICATION_CREDENTIALS_PATH: Optional[str] = None
     
     # Model configuration
-    GEMINI_FLASH_MODEL: str = "gemini-2.0-flash"
-    GEMINI_PRO_MODEL: str = "gemini-1.5-pro-002"
+    GEMINI_FLASH_MODEL: str = "gemini-2.5-flash"
+    GEMINI_PRO_MODEL: str = "gemini-2.5-pro"
     
     @property
     def GEMINI_MODELS(self) -> dict:

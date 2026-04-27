@@ -4,7 +4,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 # Add backend to path
-sys.path.append(os.path.abspath(r"c:\Users\HP\Downloads\DeciFlow AI\backend"))
+backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend"))
+sys.path.append(backend_path)
 
 from app.main import app
 

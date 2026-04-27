@@ -6,7 +6,7 @@ import asyncio
 
 # Suppress all log output to keep results clean
 logging.disable(logging.CRITICAL)
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend")))
 
 PASS = "PASS"
 FAIL = "FAIL"
@@ -166,7 +166,7 @@ def test5():
 
         # Also check main.py source directly to confirm it's wired
         import ast
-        with open(os.path.join(os.path.dirname(__file__), "app", "main.py"), encoding="utf-8") as f:
+        with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend", "app", "main.py")), encoding="utf-8") as f:
             source = f.read()
         has_limiter_var   = "limiter = Limiter(" in source
         has_state_limiter = "app.state.limiter = limiter" in source
@@ -224,8 +224,8 @@ async def test7():
     executed = []
 
     class MockHandler:
-        async def handle(self, payload):
-            executed.append(payload)
+        async def handle(self, task):
+            executed.append(task.payload)
 
     reg = TaskRegistry()
     reg.register("test_task", MockHandler())
@@ -322,7 +322,7 @@ test9()
 import glob, re
 
 def test10():
-    app_dir = os.path.join(os.path.dirname(__file__), "app")
+    app_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend", "app"))
     py_files = glob.glob(os.path.join(app_dir, "**", "*.py"), recursive=True)
     violations = []
     PATTERNS = [

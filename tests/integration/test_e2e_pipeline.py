@@ -15,7 +15,9 @@ import os
 import asyncio
 import unittest
 
-sys.path.insert(0, os.path.abspath(r"c:\Users\HP\Downloads\DeciFlow AI\backend"))
+# Replace hardcoded Windows path with dynamic path resolution
+backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../backend"))
+sys.path.insert(0, backend_path)
 os.environ["SECRET_KEY"] = "test-secret-key-safe-for-unit-tests-only-abc123"
 os.environ["ENVIRONMENT"] = "development"
 

@@ -88,17 +88,19 @@ app.add_middleware(SecurityHeadersMiddleware)    # Step 2: add security headers
 app.add_middleware(RequestLoggingMiddleware)     # Step 1: trace ID + logging
 
 # Trusted host protection — prevents Host-header injection attacks
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.ALLOWED_HOSTS)
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]
+)
 
-# CORS — allow frontend origin; permissive headers for local dev
-_cors_origins = settings.BACKEND_CORS_ORIGINS if settings.BACKEND_CORS_ORIGINS else ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,   # 👈 MUST be False with "*"
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 # 5. Exception Handlers

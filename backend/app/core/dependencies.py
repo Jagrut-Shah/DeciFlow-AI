@@ -132,10 +132,10 @@ def get_llm_service() -> ILLMService:
     return GeminiService()
 
 def get_bigquery_adapter() -> BigQueryAdapter:
-    return BigQueryAdapter(project_id="deciflow-prod")
+    return BigQueryAdapter(project_id=settings.GOOGLE_CLOUD_PROJECT)
 
 def get_storage_adapter() -> StorageAdapter:
-    return StorageAdapter(bucket_name="deciflow-data-lake")
+    return StorageAdapter(bucket_name=getattr(settings, "GCS_BUCKET_NAME", "deciflow-data-lake"))
 
 def get_user_repository(bq: BigQueryAdapter = Depends(get_bigquery_adapter)) -> IUserRepository:
     return UserRepository(db_adapter=bq)

@@ -125,11 +125,13 @@ async def execute_from_file(
     else:
         raise HTTPException(status_code=400, detail="Unsupported file type. Use .csv or .json")
 
-    if "error" in parsed:
+    if isinstance(parsed, dict) and "error" in parsed:
         raise HTTPException(status_code=422, detail=f"Parsing error: {parsed['error']}")
 
     # 2. Extract payload for the pipeline
-    if not parsed.get("data") and not isinstance(parsed, dict):
+    is_dict = isinstance(parsed, dict)
+    data_content = parsed.get("data", parsed) if is_dict else parsed
+    if not data_content or (not is_dict and not isinstance(parsed, list)):
         raise HTTPException(status_code=400, detail="Empty or invalid dataset provided.")
 
     # 3. Execute Pipeline
@@ -138,7 +140,18 @@ async def execute_from_file(
             session_id=session_id,
             payload=parsed
         )
-        count = len(parsed.get("data", []))
+        
+        if isinstance(parsed, list):
+            count = len(parsed)
+        elif is_dict:
+            data = parsed.get("data")
+            if isinstance(data, list):
+                count = len(data)
+            else:
+                count = 1  # Single object record
+        else:
+            count = 1
+
         return success_response(
             data=state.model_dump(),
             message=f"Pipeline integrated successfully. File: {file.filename}, Records processed: {count}"
