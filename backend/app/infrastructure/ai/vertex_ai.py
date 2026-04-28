@@ -23,7 +23,7 @@ class GeminiService(ILLMService):
         )
         
         if not response_text:
-            response_text = "I'm sorry, I couldn't generate a response. Please check backend logs."
+            return None
 
         return NormalizedLLMResponse(
             content=response_text,

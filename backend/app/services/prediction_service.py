@@ -25,10 +25,48 @@ logger = logging.getLogger(__name__)
 
 class PredictionService(IPredictionService):
 
-    def predict(self, features: Dict[str, Any]) -> Dict[str, Any]:
+    async def predict(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         metrics.increment("pipeline_predictions_total")
 
-        # --- Fallback: empty or fallback insights ---
+        # NEW: Handle combined input from WorkflowEngine
+        features = input_data.get("features", input_data)
+        raw_data = input_data.get("raw_data", {})
+
+        # BRIDGE: Route to PredictionAgent for hybrid (heuristic + Vertex AI) logic
+        from app.agents.prediction_agent import PredictionAgent
+        agent = PredictionAgent()
+        
+        # Format input for agent (prioritise rich metrics from DataAgent)
+        agent_input = {
+            "metrics": raw_data.get("metrics", features.get("numeric", {})),
+            "category_performance": raw_data.get("category_performance", features.get("categories", {})),
+            "data_quality": raw_data.get("data_quality", features.get("data_quality", 100)),
+            "mode": input_data.get("mode")
+        }
+        
+        agent_result = await agent.execute(agent_input)
+
+        if agent_result.get("status") != "ok":
+            logger.error(f"PredictionService: agent execution failed. {agent_result.get('error')}")
+            # Fallback to simple logic if agent fails
+            return self._fallback_logic(features)
+
+        # Map agent output back to service contract
+        predictions = agent_result.get("predictions", [])
+        
+        # Calculate an aggregate score/confidence for the service contract
+        avg_confidence = sum(p.get("confidence", 0.5) for p in predictions) / len(predictions) if predictions else 0.5
+        
+        return {
+            "prediction_score": avg_confidence, # Use confidence as a proxy for score in the legacy contract
+            "confidence": avg_confidence,
+            "probabilities": {"positive": avg_confidence, "negative": round(1.0 - avg_confidence, 4)},
+            "predictions": predictions,
+            "_fallback": False,
+        }
+
+    def _fallback_logic(self, features: Dict[str, Any]) -> Dict[str, Any]:
+        # --- Fallback: empty or fallback input ---
         if not features or features.get("_fallback"):
             logger.warning("PredictionService: empty or fallback input. Returning neutral prediction.")
             return {
@@ -49,11 +87,9 @@ class PredictionService(IPredictionService):
         positive_prob = prediction_score
         negative_prob = round(1.0 - positive_prob, 4)
 
-        logger.info(f"PredictionService: score={prediction_score}, confidence={insight_confidence}, anomaly={anomaly}.")
-
         return {
             "prediction_score": prediction_score,
             "confidence": insight_confidence,
             "probabilities": {"positive": positive_prob, "negative": negative_prob},
-            "_fallback": False,
+            "_fallback": True,
         }

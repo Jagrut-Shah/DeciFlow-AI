@@ -1,0 +1,30 @@
+date,product_name,category,units_sold,cost_price,selling_price,discount_pct,region,channel
+2024-03-01,Premium Cotton Tee,T-Shirts,45,350,899,0,North,Direct
+2024-03-01,Classic Blue Denim,Jeans,12,1200,2499,0,West,Marketplace
+2024-03-02,Summer Floral Dress,Dresses,8,850,1899,0.1,South,Direct
+2024-03-03,Slim Fit Chinos,Trousers,22,950,1999,0,East,Marketplace
+2024-03-04,Oversized Graphic Tee,T-Shirts,65,400,1299,0.05,North,Direct
+2024-03-05,Distressed Denim Jacket,Outerwear,5,1800,3999,0,West,Direct
+2024-03-06,Linen Summer Shirt,Shirts,30,650,1499,0,South,Marketplace
+2024-03-07,High-Waist Skinny Jeans,Jeans,18,1100,2299,0.15,West,Direct
+2024-03-08,Polo Neck T-Shirt,T-Shirts,40,450,1099,0,East,Marketplace
+2024-03-09,Evening Cocktail Dress,Dresses,15,1500,4500,0,North,Direct
+2024-03-10,Bomber Windbreaker,Outerwear,10,1400,2999,0.2,East,Direct
+2024-03-11,Cargo Utility Pants,Trousers,25,800,1799,0,South,Marketplace
+2024-03-12,Striped Formal Shirt,Shirts,20,700,1599,0.05,West,Direct
+2024-03-13,Basic Crewneck Sweatshirt,Hoodies,35,600,1399,0,North,Marketplace
+2024-03-14,Heavyweight Winter Hoodie,Hoodies,5,1100,2499,0.3,North,Direct
+2024-03-15,Premium Cotton Tee,T-Shirts,55,350,899,0,North,Direct
+2024-03-16,Classic Blue Denim,Jeans,14,1200,2499,0.05,West,Marketplace
+2024-03-17,Summer Floral Dress,Dresses,25,850,1899,0,South,Direct
+2024-03-18,Slim Fit Chinos,Trousers,18,950,1999,0.1,East,Marketplace
+2024-03-19,Oversized Graphic Tee,T-Shirts,80,400,1299,0,North,Direct
+2024-03-20,Distressed Denim Jacket,Outerwear,7,1800,3999,0,West,Direct
+2024-03-21,Linen Summer Shirt,Shirts,45,650,1499,0.1,South,Marketplace
+2024-03-22,High-Waist Skinny Jeans,Jeans,22,1100,2299,0,West,Direct
+2024-03-23,Polo Neck T-Shirt,T-Shirts,38,450,1099,0.05,East,Marketplace
+2024-03-24,Evening Cocktail Dress,Dresses,12,1500,4500,0,North,Direct
+2024-03-25,Bomber Windbreaker,Outerwear,3,1400,2999,0.4,East,Direct
+2024-03-26,Cargo Utility Pants,Trousers,28,800,1799,0,South,Marketplace
+2024-03-27,Striped Formal Shirt,Shirts,24,700,1599,0,West,Direct
+2024-03-28,Basic Crewneck Sweatshirt,Hoodies,42,600,1399,0.1,North,Marketplace

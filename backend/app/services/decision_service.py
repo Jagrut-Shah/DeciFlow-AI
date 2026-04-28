@@ -63,15 +63,20 @@ class DecisionService(IDecisionService):
         insights_data = context.get("insights", {})
         predictions_data = context.get("predictions", {})
         
-        agent_input = {
-            "insights": insights_data.get("all_insights", []),
-            "main_insight": {"text": insights_data.get("insights_summary")},
-            "predictions": [
+        # Combine predictions list with high-level score
+        all_predictions = predictions_data.get("predictions", [])
+        if not all_predictions:
+            all_predictions = [
                 {
                     "text": f"Performance score is {predictions_data.get('prediction_score', 0.5):.2f}",
                     "confidence": predictions_data.get("confidence", 0.5)
                 }
-            ],
+            ]
+        
+        agent_input = {
+            "insights": insights_data.get("all_insights", []),
+            "main_insight": {"text": insights_data.get("insights_summary")},
+            "predictions": all_predictions,
             "mode": context.get("mode")
         }
 

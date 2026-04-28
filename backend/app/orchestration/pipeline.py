@@ -37,10 +37,20 @@ async def _execute_step(step: PipelineStep, state: PipelineState, mode: Executio
     )
 
     try:
+        from app.core.config import settings
+        import asyncio
+
+        # Use settings.TASK_TIMEOUT as a safety net for all pipeline steps
+        timeout = getattr(settings, "TASK_TIMEOUT", 30)
+
         if inspect.iscoroutinefunction(step.func):
-            output = await step.func(input_data)
+            output = await asyncio.wait_for(step.func(input_data), timeout=timeout)
         else:
-            output = step.func(input_data)
+            # For sync functions, run in thread to avoid blocking loop
+            output = await asyncio.wait_for(
+                asyncio.to_thread(step.func, input_data), 
+                timeout=timeout
+            )
 
         setattr(state, step.output_key, output)
 

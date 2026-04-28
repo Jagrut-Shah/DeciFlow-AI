@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { FiMenu, FiX, FiGrid, FiUploadCloud, FiBarChart2, FiPlay, FiMessageSquare, FiSettings } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "./ThemeToggle";
@@ -10,6 +10,8 @@ import { ThemeToggle } from "./ThemeToggle";
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session');
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: <FiGrid size={20} /> },
@@ -24,7 +26,7 @@ export default function MobileNav() {
   return (
     <div className="lg:hidden">
       {/* Mobile Header Bar */}
-      <div className="h-20 px-6 flex items-center justify-between bg-white/60 dark:bg-[#0b0f19]/80 backdrop-blur-xl border-b border-cool-gray dark:border-white/5 sticky top-0 z-50">
+      <div className="h-20 px-6 flex items-center justify-between bg-white dark:bg-[#0b0f19] border-b border-cool-gray dark:border-white/5 sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sapphire via-emerald to-amber shadow-lg"></div>
           <h1 className="text-xl font-black tracking-tighter text-navy dark:text-white">
@@ -52,7 +54,7 @@ export default function MobileNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={toggleMenu}
-              className="fixed inset-0 bg-navy/20 dark:bg-black/60 backdrop-blur-sm z-[60]"
+              className="fixed inset-0 bg-navy/20 dark:bg-black/60 z-[60]"
             />
             <motion.div
               initial={{ x: "100%" }}
@@ -74,7 +76,7 @@ export default function MobileNav() {
                   return (
                     <Link
                       key={item.path}
-                      href={item.path}
+                      href={sessionId ? `${item.path}?session=${sessionId}` : item.path}
                       onClick={() => setIsOpen(false)}
                       className={`
                         flex items-center gap-4 px-5 py-4 rounded-2xl transition-all

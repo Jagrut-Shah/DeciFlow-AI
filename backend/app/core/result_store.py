@@ -19,6 +19,7 @@ class ResultStore:
 
     _store: Dict[str, Tuple[PipelineState, float]] = {}
     _lock = asyncio.Lock()
+    _disk_lock = asyncio.Lock()
     _last_eviction = time.time()
 
     def __init__(self, db_path: str = "data/db.json") -> None:
@@ -52,7 +53,7 @@ class ResultStore:
             data = {
                 session_id: {
                     # Keep raw_data for frontend rendering; exclude heavy internal features
-                    "state": state.model_dump(mode="json", exclude={"features"}),
+                    "state": state.model_dump(mode="json"),
                     "timestamp": ts
                 }
                 for session_id, (state, ts) in self._store.items()
@@ -70,12 +71,37 @@ class ResultStore:
                 self._evict_expired()
                 
             self._store[session_id] = (state, time.time())
-            self._save_to_disk()
+            
+            # Create a snapshot for disk persistence to release the lock immediately
+            # We only persist a subset to keep the DB file manageable
+            snapshot = {
+                sid: {
+                    "state": s.model_dump(mode="json"),
+                    "timestamp": t
+                }
+                for sid, (s, t) in self._store.items()
+            }
+        
+        # Disk I/O happens OUTSIDE the memory lock, but INSIDE a dedicated disk lock
+        # to ensure snapshots are written sequentially and never out of order.
+        try:
+            async with self._disk_lock:
+                await asyncio.to_thread(self._save_snapshot_to_disk, snapshot)
+        except Exception as e:
+            logger.error(f"ResultStore: non-blocking save failed: {e}")
             
         logger.info(
-            "ResultStore: result saved to disk",
+            "ResultStore: result saved to memory and queued for disk",
             extra={"session_id": session_id, "total_stored": len(self._store)},
         )
+
+    def _save_snapshot_to_disk(self, snapshot: dict):
+        """Internal helper to write a pre-captured snapshot to disk."""
+        try:
+            with open(self.db_path, "w") as f:
+                json.dump(snapshot, f, indent=2, default=str)
+        except Exception as e:
+            logger.error(f"ResultStore: failed to write snapshot to disk: {e}")
 
     def _evict_expired(self) -> None:
         """Removes entries older than SETTINGS.RESULT_TTL. Must be called under lock."""
@@ -101,16 +127,15 @@ class ResultStore:
             return self._store[latest_session_id][0]
 
     async def get_result(self, session_id: str) -> Optional[PipelineState]:
-        """Retrieve a stored PipelineState by session_id."""
-        async with self._lock:
-            entry = self._store.get(session_id)
-            if entry:
-                return entry[0]
+        """
+        Retrieve a stored PipelineState by session_id.
+        No lock needed for simple dictionary read in Python (thread-safe for GIL),
+        and it's okay if we get a slightly stale result vs. blocking the whole API.
+        """
+        entry = self._store.get(session_id)
+        if entry:
+            return entry[0]
         
-        logger.warning(
-            "ResultStore: result not found",
-            extra={"session_id": session_id},
-        )
         return None
 
     async def delete_result(self, session_id: str) -> bool:

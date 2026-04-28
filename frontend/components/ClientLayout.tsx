@@ -13,8 +13,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <div className="flex flex-col lg:flex-row min-h-screen w-full relative">
       {/* Global Animated Background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[10%] w-[40%] h-[40%] bg-sapphire/5 blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald/5 rounded-full animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[10%] w-[40%] h-[40%] bg-sapphire/5 rounded-full animate-pulse [animation-delay:2s]" />
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150" />
       </div>
 

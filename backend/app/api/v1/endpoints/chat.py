@@ -22,7 +22,8 @@ async def chat(
     
     response_text = await ai_service.get_chat_response(
         message=request.message,
-        history=request.history or []
+        history=request.history or [],
+        session_id=request.session_id
     )
     
     return success_response(

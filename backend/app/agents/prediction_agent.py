@@ -91,10 +91,9 @@ class PredictionAgent(BaseAgent):
             from app.core.config import settings
             
             is_fast_mode = input_data.get("mode") == "FAST"
-            has_credentials = settings.GOOGLE_APPLICATION_CREDENTIALS_PATH or settings.GOOGLE_API_KEY
+            adapter = VertexAdapter()
             
-            if not is_fast_mode and has_credentials:
-                adapter = VertexAdapter()
+            if not is_fast_mode and adapter.is_available:
                 prompt = f"""
                 Analyze these business metrics and provide 2-3 specific forecasts for the next period.
                 Focus on potential risks or growth opportunities.

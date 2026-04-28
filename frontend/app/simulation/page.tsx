@@ -237,7 +237,7 @@ export default function SimulationPage() {
                                 rotate: [0, 90, 180, 270, 360]
                             }}
                             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                            className="absolute -top-20 -right-20 w-64 h-64 bg-sapphire/5 rounded-full blur-3xl pointer-events-none" 
+                            className="absolute -top-20 -right-20 w-64 h-64 bg-sapphire/5 rounded-full pointer-events-none" 
                         />
                         
                         <h2 className="text-2xl font-bold text-navy dark:text-white mb-8 flex items-center gap-2 relative z-10">
@@ -250,9 +250,9 @@ export default function SimulationPage() {
                                 {isSimulating ? (
                                     <motion.div 
                                         key="loading"
-                                        initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-                                        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                                        exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 1.1 }}
                                         className="flex flex-col items-center gap-8"
                                     >
                                         <div className="relative w-56 h-56 flex items-center justify-center">
@@ -260,7 +260,7 @@ export default function SimulationPage() {
                                             <motion.div 
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
-                                                className="absolute inset-0 border border-sapphire/20 rounded-3xl overflow-hidden bg-sapphire/[0.02] dark:bg-white/[0.02] backdrop-blur-sm"
+                                                className="absolute inset-0 border border-sapphire/20 rounded-3xl overflow-hidden bg-sapphire/[0.02] dark:bg-white/[0.02]"
                                             >
                                                 <div className="absolute inset-0 grid grid-cols-6 grid-rows-6 opacity-30">
                                                     {[...Array(36)].map((_, i) => (
@@ -288,7 +288,7 @@ export default function SimulationPage() {
                                                             repeat: Infinity, 
                                                             delay: i * 0.4 
                                                         }}
-                                                        className="absolute w-2 h-2 bg-sapphire/60 rounded-full blur-[1px]"
+                                                        className="absolute w-2 h-2 bg-sapphire/60 rounded-full"
                                                         style={{ 
                                                             top: `${[20, 45, 70, 30, 60, 80][i]}%`, 
                                                             left: `${[30, 15, 60, 80, 25, 75][i]}%` 
@@ -304,7 +304,7 @@ export default function SimulationPage() {
                                                     rotate: [0, 90, 180, 270, 360]
                                                 }}
                                                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                                                className="w-20 h-20 border border-sapphire/30 rounded-2xl flex items-center justify-center bg-white/5 backdrop-blur-xl relative z-20"
+                                                className="w-20 h-20 border border-sapphire/30 rounded-2xl flex items-center justify-center bg-white/5 relative z-20"
                                             >
                                                 <motion.div 
                                                     animate={{ opacity: [0.4, 1, 0.4] }}
@@ -327,7 +327,7 @@ export default function SimulationPage() {
                                     >
                                         <motion.div 
                                             whileHover={{ scale: 1.02 }}
-                                            className="bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 rounded-[2.5rem] p-6 md:p-10 text-center shadow-2xl shadow-sapphire/5 backdrop-blur-xl"
+                                            className="bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 rounded-[2.5rem] p-6 md:p-10 text-center shadow-2xl shadow-sapphire/5"
                                         >
                                             <p className="text-muted-text dark:text-white/40 text-[10px] font-black mb-4 uppercase tracking-[0.2em]">Predicted Net Profit</p>
                                             <motion.p 
@@ -373,11 +373,11 @@ export default function SimulationPage() {
                                             className="mt-8 p-8 bg-gradient-to-br from-navy to-[#0b0f19] text-white rounded-[2rem] relative shadow-2xl shadow-navy/40 overflow-hidden group border border-white/5"
                                         >
                                             <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:rotate-12 transition-transform duration-700">
-                                                <div className="w-12 h-12 bg-emerald blur-2xl rounded-full" />
+                                                <div className="w-12 h-12 bg-emerald rounded-full" />
                                             </div>
-                                            <p className="text-[15px] leading-relaxed font-medium text-white/80 line-clamp-4">
+                                            <div className="text-[15px] leading-relaxed font-medium text-white/80 line-clamp-4">
                                                 &ldquo;{results.narrative?.replace(/^(\*\*|)(Executive Summary:|Summary:|Analysis:|Insight:)(\*\*|)\s*/i, '') || "System analysis complete. Strategic recommendation synchronized."}&rdquo;
-                                            </p>
+                                            </div>
                                         </motion.div>
 
                                         <Button
@@ -459,7 +459,7 @@ const SimulationInput = ({ label, value, onChange, prefix, suffix }: any) => (
 const ResultMiniCard = ({ label, value, trend, color }: any) => (
     <motion.div 
         whileHover={{ y: -5, scale: 1.02 }}
-        className="bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 rounded-[1.8rem] p-6 text-center backdrop-blur-md shadow-lg shadow-black/5"
+        className="bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 rounded-[1.8rem] p-6 text-center shadow-lg shadow-black/5"
     >
         <p className="text-muted-text dark:text-white/40 text-[9px] font-black mb-2 uppercase tracking-[0.2em]">{label}</p>
         <div className="flex items-center justify-center gap-2">

@@ -51,17 +51,17 @@ class InsightService(IInsightService):
             return self._fallback_logic(features)
 
         # Map agent output back to service contract
-        summary = agent_result.get("main_insight", {}).get("text", "Analysis complete.")
+        main_insight = agent_result.get("main_insight", "Analysis complete.")
         
         return {
-            "insights_summary": summary,
-            "top_signal": agent_result.get("main_insight", {}).get("type", "none"),
+            "insights_summary": main_insight,
+            "top_signal": agent_result.get("top_signal", "none"),
             "confidence": 0.9 if agent_result.get("status") == "ok" else 0.5,
-            "anomaly_detected": any(i.get("priority") == "high" for i in agent_result.get("insights", [])),
-            "context": agent_result.get("ai_narrative", summary),
+            "anomaly_detected": agent_result.get("anomaly_detected", False),
+            "context": agent_result.get("context", main_insight),
             "metrics_snapshot": features.get("numeric", {}),
-            "all_insights": agent_result.get("insights", []),
-            "visualization": agent_result.get("visualization"),
+            "all_insights": agent_result.get("all_insights", []),
+            "visualization_config": agent_result.get("visualization_config"),
             "_fallback": False,
         }
 

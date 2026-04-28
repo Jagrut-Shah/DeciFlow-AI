@@ -131,7 +131,8 @@ body {
 
 .glass-panel {
   background: var(--panel-bg);
-  backdrop-filter: blur(24px) saturate(180%);
+  /* Removed blur for cleaner UI */
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--glass-border);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;

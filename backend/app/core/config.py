@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1", "0.0.0.0"]
     RATE_LIMIT_PER_MINUTE: int = 60
-    TASK_TIMEOUT: int = 30                 # Seconds before a background task is killed
+    TASK_TIMEOUT: int = 120                 # Seconds before a background task is killed
     # LLM & Vertex AI
     GOOGLE_API_KEY: Optional[str] = None
     GOOGLE_CLOUD_PROJECT: str = "bio-budget"
@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     GOOGLE_APPLICATION_CREDENTIALS_PATH: Optional[str] = None
     
     # Model configuration
-    GEMINI_FLASH_MODEL: str = "gemini-2.5-flash"
-    GEMINI_PRO_MODEL: str = "gemini-2.5-pro"
+    GEMINI_FLASH_MODEL: str = "gemini-1.5-flash"
+    GEMINI_PRO_MODEL: str = "gemini-1.5-pro"
     
     @property
     def GEMINI_MODELS(self) -> dict:

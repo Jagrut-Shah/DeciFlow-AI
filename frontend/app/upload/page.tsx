@@ -53,18 +53,16 @@ export default function UploadPage() {
             const formData = new FormData();
             formData.append('file', file);
             
-            // Ensure the API URL is constructed safely with fallbacks
-            const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
-            const endpoint = `${baseUrl}/api/v1/pipeline/execute-from-file`;
+            // 2. Determine Endpoint (Handle potential trailing slashes or redundant prefixes)
+            const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
+            const apiPath = baseUrl.includes("/api/v1") ? "" : "/api/v1";
+            const endpoint = `${baseUrl}${apiPath}/pipeline/execute-from-file`;
 
-            const response = await fetch(
-                endpoint,
-                {
-                    method: "POST",
-                    body: formData,
-                }
-            );
-            
+            const response = await fetch(endpoint, {
+                method: "POST",
+                body: formData,
+            });
+
             if (!response.ok) {
                 let detailedErrorMessage = `Status: ${response.status} ${response.statusText}.`;
                 try {
@@ -80,8 +78,8 @@ export default function UploadPage() {
                         } else {
                             detailedErrorMessage = JSON.stringify(errorData.detail);
                         }
-                    } else if (errorData && errorData.message) { // Assuming backend might return 'message' for CustomException
-                        detailedErrorMessage = errorData.message;
+                    } else if (errorData && (errorData.message || errorData.error)) {
+                        detailedErrorMessage = errorData.message || errorData.error;
                     }
                 } catch (jsonParseError) {
                     console.warn("Could not parse error response as JSON:", jsonParseError);
@@ -89,10 +87,13 @@ export default function UploadPage() {
                 throw new Error(`Neural ingestion failed: ${detailedErrorMessage}`);
             }
 
+            const data = await response.json();
+            const sessionId = data.session_id;
+
             setIsSuccess(true);
             setFile(null);
             setTimeout(() => {
-                router.push('/dashboard');
+                router.push(`/dashboard${sessionId ? `?session=${sessionId}` : ''}`);
             }, 2000);
         } catch (error: unknown) { // Use unknown for better type safety
             setIsSuccess(false); // Ensure success state is false on error
@@ -128,7 +129,7 @@ export default function UploadPage() {
                 </p>
             </motion.div>
 
-            <Card className="p-1.5 bg-white dark:bg-white/[0.03] border-cool-gray dark:border-white/10 rounded-[3rem] shadow-2xl overflow-hidden backdrop-blur-3xl">
+            <Card className="p-1.5 bg-white dark:bg-white/[0.03] border-cool-gray dark:border-white/10 rounded-[3rem] shadow-2xl overflow-hidden">
                 <div
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -154,8 +155,8 @@ export default function UploadPage() {
                         {isSuccess ? (
                             <motion.div 
                                 key="success"
-                                initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-                                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
                                 className="flex flex-col items-center gap-8 py-10"
                             >
                                 <div className="w-24 h-24 bg-emerald/10 border border-emerald/20 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-emerald/10">

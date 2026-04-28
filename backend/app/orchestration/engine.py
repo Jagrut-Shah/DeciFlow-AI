@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -47,7 +48,13 @@ class WorkflowEngine:
     async def _persist(self, state: PipelineState) -> None:
         """Save current state snapshot into ResultStore (no-op if not wired)."""
         if self._result_store is not None:
-            await self._result_store.save_result(state.session_id, state)
+            try:
+                # Set a reasonable timeout for persistence to prevent I/O blocking
+                await asyncio.wait_for(self._result_store.save_result(state.session_id, state), timeout=10.0)
+            except asyncio.TimeoutError:
+                logger.warning(f"WorkflowEngine: Persistence timed out for session {state.session_id}")
+            except Exception as e:
+                logger.error(f"WorkflowEngine: Persistence failed: {e}")
 
     # ── Public API ────────────────────────────────────────────────────────────
 
@@ -89,6 +96,14 @@ class WorkflowEngine:
                 "mode": active_mode.name
             })
             
+        async def _run_prediction(features):
+            # NEW: Run prediction from features/raw_data directly in parallel with insights
+            return await self.prediction.predict({
+                "features": features,
+                "raw_data": state.raw_data,
+                "mode": active_mode.name
+            })
+
         async def _run_decision(predictions):
             return await self.decision.orchestrate_decision({
                 "session_id": state.session_id,
@@ -97,48 +112,106 @@ class WorkflowEngine:
                 "mode": active_mode.name
             })
 
-        steps = [
-            PipelineStep(
+        async def _core_execution():
+            nonlocal state
+            # Step 1: Data Ingestion
+            step_data = PipelineStep(
                 name="DataIngestion",
                 func=_run_data,
                 input_key="raw_data",
                 output_key="raw_data",
-            ),
-            PipelineStep(
+            )
+            state.metadata["current_step"] = "DataIngestion"
+            state = await _execute_step(step_data, state, active_mode)
+            state.steps_completed.append("DataIngestion")
+            await self._persist(state)
+
+            # Step 2: Feature Engineering
+            step_feature = PipelineStep(
                 name="FeatureEngineering",
                 func=self.feature.extract_features,
                 input_key="raw_data",
                 output_key="features",
-            ),
-            PipelineStep(
-                name="InsightGeneration",
-                func=_run_insights,
-                input_key="features",
-                output_key="insights",
-            ),
-            PipelineStep(
-                name="Prediction",
-                func=self.prediction.predict,
-                input_key="insights",
-                output_key="predictions",
-            ),
-            PipelineStep(
+            )
+            state.metadata["current_step"] = "FeatureEngineering"
+            state = await _execute_step(step_feature, state, active_mode)
+            state.steps_completed.append("FeatureEngineering")
+            await self._persist(state)
+
+            # Step 3 & 4: Insight Generation & Prediction (PARALLEL)
+            # Execute both in parallel as independent coroutines with a dedicated timeout
+            state.metadata["current_step"] = "InsightAndPrediction"
+            
+            try:
+                # Run parallel steps with a 60s limit (should be plenty for LLM calls)
+                results = await asyncio.wait_for(
+                    asyncio.gather(
+                        _run_insights(state.features),
+                        _run_prediction(state.features),
+                        return_exceptions=True
+                    ),
+                    timeout=60.0
+                )
+                
+                # Process results sequentially to update state safely
+                if isinstance(results[0], Exception):
+                    logger.error(f"WorkflowEngine: InsightGeneration failed: {results[0]}")
+                    state.insights = {"status": "error", "insights": [], "main_insight": "Insight engine encountered a transient error."}
+                else:
+                    state.insights = results[0]
+                    state.steps_completed.append("InsightGeneration")
+                    
+                if isinstance(results[1], Exception):
+                    logger.error(f"WorkflowEngine: Prediction failed: {results[1]}")
+                    state.predictions = {"status": "error", "predictions": [], "prediction_score": 0.5}
+                else:
+                    state.predictions = results[1]
+                    state.steps_completed.append("Prediction")
+                    
+            except asyncio.TimeoutError:
+                logger.error(f"WorkflowEngine: Parallel steps (Insight/Prediction) timed out")
+                state.insights = state.insights or {"status": "timeout", "main_insight": "Analysis timed out. Please retry."}
+                state.predictions = state.predictions or {"status": "timeout", "prediction_score": 0.5}
+
+            # Persist now that both parallel steps are committed to state
+            await self._persist(state)
+            state.metadata["current_step"] = "Decision" # Prepare for next
+
+            # Step 5: Decision
+            step_decision = PipelineStep(
                 name="Decision",
                 func=_run_decision,
                 input_key="predictions",
                 output_key="decisions",
-            ),
-            PipelineStep(
+            )
+            state.metadata["current_step"] = "Decision"
+            state = await _execute_step(step_decision, state, active_mode)
+            state.steps_completed.append("Decision")
+            await self._persist(state)
+
+            # Step 6: Simulation
+            step_simulation = PipelineStep(
                 name="Simulation",
                 func=self.simulation.simulate,
                 input_key="decisions",
                 output_key="simulation",
-            ),
-        ]
+            )
+            state.metadata["current_step"] = "Simulation"
+            state = await _execute_step(step_simulation, state, active_mode)
+            state.steps_completed.append("Simulation")
+            await self._persist(state)
 
         try:
-            for step in steps:
-                state = await _execute_step(step, state, active_mode)
+            # Wrap entire execution in a global timeout (2 minutes)
+            await asyncio.wait_for(_core_execution(), timeout=120)
+
+        except asyncio.TimeoutError:
+            state.status = PipelineStatus.FAILED
+            state.completed_at = _utcnow()
+            state.metadata["error"] = "Global Pipeline Timeout (120s exceeded)"
+            logger.error(f"WorkflowEngine: Pipeline TIMEOUT for {session_id}")
+            await self._persist(state)
+            return state
 
         except Exception as exc:
             # ── FAILED ────────────────────────────────────────────────────────
@@ -159,7 +232,9 @@ class WorkflowEngine:
 
             # Persist FAILED state so callers can observe the failure
             await self._persist(state)
-            raise  # re-raise so STRICT mode callers see the error
+            if active_mode == ExecutionMode.STRICT:
+                raise
+            return state
 
         # ── COMPLETED ─────────────────────────────────────────────────────────
         state.status = PipelineStatus.COMPLETED
@@ -177,3 +252,4 @@ class WorkflowEngine:
         # Persist final COMPLETED state
         await self._persist(state)
         return state
+

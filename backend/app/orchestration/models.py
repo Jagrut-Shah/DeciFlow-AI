@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Optional
 
+import asyncio
 from pydantic import BaseModel, Field
 
 
@@ -34,6 +35,10 @@ class PipelineState(BaseModel):
     predictions: Optional[Any] = None
     decisions: Optional[Any] = None
     simulation: Optional[Any] = None
+
+    # ── Progress tracking ────────────────────────────────────────────────────
+    current_step: Optional[str] = None
+    steps_completed: list[str] = Field(default_factory=list)
 
     # ── Arbitrary metadata (error info, mode, versions, …) ───────────────────
     metadata: dict = Field(default_factory=dict)

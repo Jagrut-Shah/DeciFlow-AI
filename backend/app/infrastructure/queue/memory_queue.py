@@ -65,7 +65,7 @@ class MemoryQueue(ITaskQueue):
         await asyncio.sleep(delay)
         await self.enqueue(task)
 
-    async def start_consuming(self, concurrency: int = 3) -> None:
+    async def start_consuming(self, concurrency: int = 5) -> None:
         self._running = True
         logger.info(f"Starting {concurrency} queue workers...")
         

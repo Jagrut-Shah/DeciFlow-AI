@@ -3,7 +3,7 @@ from typing import Optional
 import uuid
 
 from app.core.config import settings
-from app.core.dependencies import get_workflow_engine, get_task_queue, get_result_store, get_data_service
+from app.core.dependencies import get_workflow_engine, get_task_queue, get_result_store, get_data_service, get_trace_id
 from app.domain.interfaces.data_service import IDataService
 from app.core.exceptions import CustomException
 from app.orchestration.engine import WorkflowEngine
@@ -107,8 +107,9 @@ async def get_pipeline_result(
 
 @router.post("/execute-from-file", response_model=APIResponse)
 async def execute_from_file(
+    request: Request,
     file: UploadFile = File(...),
-    engine: WorkflowEngine = Depends(get_workflow_engine),
+    queue: MemoryQueue = Depends(get_task_queue),
     data_svc: IDataService = Depends(get_data_service)
 ):
     """
@@ -118,9 +119,11 @@ async def execute_from_file(
     
     # 1. Read and Parse
     content = await file.read()
-    if file.filename.endswith(".csv"):
+    filename_lower = file.filename.lower()
+    
+    if filename_lower.endswith(".csv"):
         parsed = data_svc.parse_csv_content(content)
-    elif file.filename.endswith(".json"):
+    elif filename_lower.endswith(".json"):
         parsed = data_svc.parse_json_content(content)
     else:
         raise HTTPException(status_code=400, detail="Unsupported file type. Use .csv or .json")
@@ -128,37 +131,58 @@ async def execute_from_file(
     if isinstance(parsed, dict) and "error" in parsed:
         raise HTTPException(status_code=422, detail=f"Parsing error: {parsed['error']}")
 
-    # 2. Extract payload for the pipeline
-    is_dict = isinstance(parsed, dict)
-    data_content = parsed.get("data", parsed) if is_dict else parsed
-    if not data_content or (not is_dict and not isinstance(parsed, list)):
+    # 2. Extract and Normalize payload for the pipeline
+    if isinstance(parsed, list):
+        payload = {"data": parsed}
+    elif isinstance(parsed, dict):
+        if "data" in parsed and isinstance(parsed["data"], list):
+            payload = parsed
+        else:
+            # If it's a single object, wrap it in a list
+            payload = {"data": [parsed]}
+    else:
         raise HTTPException(status_code=400, detail="Empty or invalid dataset provided.")
 
-    # 3. Execute Pipeline
-    try:
-        state = await engine.execute_pipeline(
-            session_id=session_id,
-            payload=parsed
-        )
-        
-        if isinstance(parsed, list):
-            count = len(parsed)
-        elif is_dict:
-            data = parsed.get("data")
-            if isinstance(data, list):
-                count = len(data)
-            else:
-                count = 1  # Single object record
-        else:
-            count = 1
+    if not payload["data"]:
+        raise HTTPException(status_code=400, detail="Dataset contains no records.")
 
-        return success_response(
-            data=state.model_dump(),
-            message=f"Pipeline integrated successfully. File: {file.filename}, Records processed: {count}"
-        )
-    except Exception as e:
-        raise CustomException(
-            message=f"Integrated pipeline failure: {str(e)}",
-            status_code=500,
-            error_code="PIPELINE_INTEGRATION_ERROR"
-        )
+    # 3. Trigger Pipeline via MemoryQueue for better reliability/retries
+    from app.infrastructure.queue.memory_queue import TaskMessage
+    
+    task = TaskMessage(
+        task_id=session_id,
+        task_name="workflow_pipeline",
+        payload={
+            "session_id": session_id,
+            "payload": payload
+        },
+        max_retries=settings.MAX_RETRIES,
+        trace_id=get_trace_id(request),
+    )
+    
+    await queue.enqueue(task)
+
+    logger.info(
+        f"Pipeline triggered via queue: {session_id}",
+        extra={"session_id": session_id, "record_count": count}
+    )
+
+    if isinstance(parsed, list):
+        count = len(parsed)
+    elif isinstance(parsed, dict):
+        data = parsed.get("data")
+        if isinstance(data, list):
+            count = len(data)
+        else:
+            count = 1  # Single object record
+    else:
+        count = 1
+
+    return success_response(
+        data={
+            "session_id": session_id,
+            "status": "PENDING",
+            "record_count": count
+        },
+        message=f"Pipeline triggered successfully. File: {file.filename}, Records: {count}. Tracking progress via session_id."
+    )

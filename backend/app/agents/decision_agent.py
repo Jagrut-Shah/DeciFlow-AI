@@ -110,18 +110,21 @@ class DecisionAgent(BaseAgent):
             if not is_fast_mode:
                 adapter = VertexAdapter()
                 
-                # Use consolidated AI call for efficiency and reliability
-                package = await adapter.generate_decision_package(insights, predictions)
-                ai_decisions = package.get("decisions", [])
-                
-                if ai_decisions and len(ai_decisions) > 0:
-                    # CRITICAL: If we have AI decisions, we ONLY use them to ensure a high-fidelity experience.
-                    for d in ai_decisions:
-                        d["confidence"] = round(d.get("confidence", 0.95), 2)
-                    decisions = ai_decisions
-                
-                # Update strategic advice from package
-                ai_advice = package.get("advice") or "AI Strategic Advisory completed successfully."
+                if adapter.is_available:
+                    # Use consolidated AI call for efficiency and reliability
+                    package = await adapter.generate_decision_package(insights, predictions)
+                    ai_decisions = package.get("decisions", [])
+                    
+                    if ai_decisions and len(ai_decisions) > 0:
+                        # CRITICAL: If we have AI decisions, we ONLY use them to ensure a high-fidelity experience.
+                        for d in ai_decisions:
+                            d["confidence"] = round(d.get("confidence", 0.95), 2)
+                        decisions = ai_decisions
+                    
+                    # Update strategic advice from package
+                    ai_advice = package.get("advice") or "AI Strategic Advisory completed successfully."
+                else:
+                    ai_advice = "AI Strategic Advisory skipped (missing credentials)."
             else:
                 ai_advice = "AI Strategic Advisory skipped (FAST mode or missing credentials)."
         except Exception as e:
@@ -204,12 +207,12 @@ class DecisionAgent(BaseAgent):
 
         if impact == "negative":
             return [self._decision(
-                action          = "Monitor performance closely over the next period.",
+                action          = "Execute Advanced Strategic Rebalancing",
                 dtype           = "strategy",
                 priority        = "high",
                 based_on        = text,
-                reason          = "A critical negative signal has been detected.",
-                expected_impact = "Early visibility into worsening trends.",
+                reason          = "A critical negative signal has been detected in current operational vectors.",
+                expected_impact = "Mitigation of identified volatility through proactive realignment.",
                 confidence      = round(conf, 2),
             )]
 

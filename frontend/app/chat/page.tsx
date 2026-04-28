@@ -7,13 +7,12 @@ import { FaRobot } from "react-icons/fa";
 import { apiClient } from "@/services/api";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface Message {
-    id: number;
-    text: string;
-    sender: "user" | "ai";
-}
+import { useSearchParams } from "next/navigation";
 
 export default function ChatPage() {
+    const searchParams = useSearchParams();
+    const sessionId = searchParams.get('session');
+    
     const [messages, setMessages] = useState<Message[]>([
         { id: 1, text: "Welcome to DeciFlow AI Copilot. I'm connected to your system data and ready to assist with strategic analysis. How can I help you today?", sender: "ai" }
     ]);
@@ -54,7 +53,8 @@ export default function ChatPage() {
                 history: messages.map(m => ({
                     role: m.sender === 'ai' ? 'assistant' : 'user',
                     content: m.text
-                }))
+                })),
+                session_id: sessionId
             });
             
             if (result.status === 'success') {
@@ -103,8 +103,8 @@ export default function ChatPage() {
                     {messages.map((msg, index) => (
                         <motion.div
                             key={msg.id}
-                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
                             transition={{ type: "spring", stiffness: 260, damping: 25 }}
                             className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} group`}
@@ -125,9 +125,9 @@ export default function ChatPage() {
                                     p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-all duration-500 relative group-hover:shadow-sapphire/5
                                     ${msg.sender === 'user'
                                          ? 'bg-gradient-to-br from-sapphire via-sapphire to-navy text-white rounded-tr-none shadow-sapphire/20'
-                                         : 'bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 text-navy dark:text-white/80 rounded-tl-none backdrop-blur-3xl'}
+                                         : 'bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 text-navy dark:text-white/80 rounded-tl-none'}
                                 `}>
-                                    <p className="leading-relaxed text-[16px] font-medium selection:bg-white/20 whitespace-pre-wrap">{msg.text}</p>
+                                    <div className="leading-relaxed text-[16px] font-medium selection:bg-white/20 whitespace-pre-wrap">{msg.text}</div>
                                     
                                     <div className={`absolute bottom-[-20px] ${msg.sender === 'user' ? 'right-0' : 'left-0'} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
                                         <span className="text-[10px] font-black text-muted-text dark:text-white/20 uppercase tracking-widest">
@@ -150,7 +150,7 @@ export default function ChatPage() {
                             <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-sapphire/10 border border-sapphire/20 flex items-center justify-center shrink-0">
                                 <FaRobot size={20} className="text-sapphire/50 animate-pulse" />
                             </div>
-                            <div className="bg-white/[0.03] border border-cool-gray dark:border-white/5 py-5 px-8 rounded-[2rem] rounded-tl-none backdrop-blur-md flex items-center gap-3">
+                            <div className="bg-white/[0.03] border border-cool-gray dark:border-white/5 py-5 px-8 rounded-[2rem] rounded-tl-none flex items-center gap-3">
                                 <motion.span 
                                     animate={{ scale: [1, 1.5, 1] }}
                                     transition={{ duration: 1, repeat: Infinity, delay: 0 }}
@@ -185,7 +185,7 @@ export default function ChatPage() {
                         <span>Connected to Intelligence Layer</span>
                     </div>
                     
-                    <Card className="p-3 bg-white dark:bg-white/[0.02] border-cool-gray dark:border-white/10 backdrop-blur-3xl shadow-2xl rounded-[3rem] group focus-within:border-sapphire/40 focus-within:shadow-sapphire/5 transition-all duration-500">
+                    <Card className="p-1.5 bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 rounded-[3rem] shadow-2xl overflow-hidden focus-within:border-sapphire/40 focus-within:shadow-sapphire/5 transition-all duration-500">
                         <form
                             onSubmit={handleSend}
                             className="flex gap-3"
