@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/MobileNav";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,11 +18,15 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150" />
       </div>
 
-      <MobileNav />
+      <Suspense fallback={null}>
+        <MobileNav />
+      </Suspense>
 
       {/* Sidebar Area - Desktop */}
       <div className="hidden lg:block w-80 shrink-0 h-screen sticky top-0 z-20">
-        <Sidebar />
+        <Suspense fallback={null}>
+          <Sidebar />
+        </Suspense>
       </div>
 
       {/* Main Content Area */}
