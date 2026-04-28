@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
 import { apiClient, API_BASE_URL } from "@/services/api";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 
 export default function SimulationPage() {
     const [adSpend, setAdSpend] = useState(50000);
@@ -98,7 +98,7 @@ export default function SimulationPage() {
         }
     };
 
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
         visible: { 
             opacity: 1, 
@@ -110,7 +110,7 @@ export default function SimulationPage() {
         }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, x: -10 },
         visible: { opacity: 1, x: 0 }
     };
