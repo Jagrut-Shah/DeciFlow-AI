@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, Query, BackgroundTasks, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, Query, BackgroundTasks, UploadFile, File, HTTPException, Request
 from typing import Optional
 import uuid
+import logging
 
 from app.core.config import settings
 from app.core.dependencies import get_workflow_engine, get_task_queue, get_result_store, get_data_service, get_trace_id
@@ -13,6 +14,7 @@ from app.core.result_store import ResultStore
 from app.schemas.response import APIResponse, success_response
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.post("/run-sync", response_model=APIResponse)
 async def run_pipeline_sync(
@@ -160,13 +162,7 @@ async def execute_from_file(
         trace_id=get_trace_id(request),
     )
     
-    await queue.enqueue(task)
-
-    logger.info(
-        f"Pipeline triggered via queue: {session_id}",
-        extra={"session_id": session_id, "record_count": count}
-    )
-
+    # Calculate record count for response BEFORE logging
     if isinstance(parsed, list):
         count = len(parsed)
     elif isinstance(parsed, dict):
@@ -177,6 +173,13 @@ async def execute_from_file(
             count = 1  # Single object record
     else:
         count = 1
+
+    await queue.enqueue(task)
+
+    logger.info(
+        f"Pipeline triggered via queue: {session_id}",
+        extra={"session_id": session_id, "record_count": count}
+    )
 
     return success_response(
         data={

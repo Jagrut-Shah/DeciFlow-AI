@@ -271,7 +271,7 @@ export default function DashboardPage() {
                                     <div className="text-navy dark:text-white/90 leading-relaxed text-xl font-bold italic transition-colors">
                                         &ldquo;{(data?.status === 'RUNNING' || data?.status === 'PENDING') 
                                             ? "Neural Synthesis: 1.3x ROI optimization with high resilience." 
-                                            : (data?.main_insight?.substring(0, 100) || "Neural Synthesis: 1.3x ROI optimization with high resilience.")}
+                                            : (data?.main_insight || "Neural Synthesis: 1.3x ROI optimization with high resilience.")}
                                         &rdquo;
                                     </div>
                                 </div>
@@ -291,68 +291,6 @@ export default function DashboardPage() {
                 </motion.div>
             </div>
 
-            {/* Tactical Development Matrix Section */}
-            <motion.div variants={itemVariants} className="space-y-8 pt-10">
-                <div className="flex items-center justify-between border-b border-cool-gray dark:border-white/5 pb-6">
-                    <h3 className="text-xl md:text-2xl font-black text-navy dark:text-white uppercase tracking-tighter italic">Tactical Development Matrix</h3>
-                    <div className="flex items-center gap-2 text-emerald font-black text-[10px] uppercase tracking-widest">
-                        <span className="w-2 h-2 bg-emerald rounded-full animate-pulse shadow-[0_0_8px_rgba(22,168,122,0.5)]"></span>
-                        Optimized
-                    </div>
-                </div>
-                
-                <Card className="overflow-hidden border-none bg-white/40 dark:bg-white/[0.02] shadow-xl p-0">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-cool-gray dark:border-white/5">
-                                    <th className="px-6 py-4 text-[9px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Priority</th>
-                                    <th className="px-6 py-4 text-[9px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Strategic Action</th>
-                                    <th className="px-6 py-4 text-[9px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Rationale</th>
-                                    <th className="px-6 py-4 text-[9px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Impact</th>
-                                    <th className="px-6 py-4 text-[9px] font-black text-muted-text dark:text-white/30 uppercase tracking-[0.2em]">Confidence</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-cool-gray dark:divide-white/5">
-                                {(data?.all_decisions && data.all_decisions.length > 0 ? data.all_decisions : [
-                                    { priority: "high", action: "Neural Strategy Scale", reason: "High ROI for online spend.", expected_impact: "+18.5%", confidence: 0.94 },
-                                    { priority: "medium", action: "Adaptive Pricing", reason: "Mid-tier price optimization.", expected_impact: "+12.0%", confidence: 0.88 },
-                                    { priority: "low", action: "Smart Logistics", reason: "Reduced storage overhead.", expected_impact: "-5.0%", confidence: 0.82 }
-                                ]).slice(0, 3).map((item: any, idx: number) => (
-                                        <tr key={idx} className="group hover:bg-sapphire/[0.02] dark:hover:bg-white/[0.01] transition-colors">
-                                            <td className="px-6 py-4">
-                                                <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
-                                                    item.priority === 'high' ? 'bg-alert-red/10 text-alert-red border border-alert-red/20' : 
-                                                    item.priority === 'medium' ? 'bg-amber/10 text-amber border border-amber/20' : 
-                                                    'bg-cool-gray dark:bg-white/5 text-muted-text dark:text-white/40'
-                                                }`}>
-                                                    {item.priority}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <p className="text-xs font-black text-navy dark:text-white group-hover:text-sapphire transition-colors">{item.action}</p>
-                                            </td>
-                                            <td className="px-6 py-4 max-w-[200px]">
-                                                <p className="text-[10px] text-body-text dark:text-white/50 font-medium truncate italic">{item.reason || "Strategic alignment."}</p>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <p className="text-[10px] font-black text-emerald">{item.expected_impact || item.impact}</p>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="flex-1 h-1 w-12 bg-cool-gray dark:bg-white/5 rounded-full overflow-hidden">
-                                                        <div className="h-full bg-sapphire" style={{ width: `${(item.confidence || 0.8) * 100}%` }} />
-                                                    </div>
-                                                    <span className="text-[9px] font-black text-navy dark:text-white">{Math.round((item.confidence || 0.8) * 100)}%</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </Card>
-            </motion.div>
         </motion.div>
     );
 }

@@ -149,7 +149,7 @@ function InsightsContent() {
     
     const rawInsight = data?.ai_strategic_advice || data?.main_insight || "Neural Synthesis: 1.3x ROI and balanced supply vectors confirmed.";
     
-    const mainInsight = (rawInsight || "").length > 120 ? (rawInsight || "").substring(0, 120) + "..." : (rawInsight || "Neural Synthesis: 1.3x ROI optimization confirmed.");
+    const mainInsight = rawInsight || "Neural Synthesis: 1.3x ROI optimization confirmed.";
     
     const topProduct = stats.find((s: any) => s.label === "Predictive ROI")?.value || "1.3x";
     const bestRegion = stats.find((s: any) => s.label === "Efficacy Index")?.value || "88";
