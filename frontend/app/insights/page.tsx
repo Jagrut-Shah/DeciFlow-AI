@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Card from "@/components/Card";
 import { FiCpu, FiAward, FiGlobe, FiAlertTriangle, FiTrendingUp, FiCheckCircle, FiDownload, FiShare2 } from "react-icons/fi";
 import { apiClient, API_BASE_URL } from "@/services/api";
@@ -8,7 +8,7 @@ import DynamicChart from "@/components/DynamicChart";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 
-export default function InsightsPage() {
+function InsightsContent() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session');
     
@@ -147,13 +147,9 @@ export default function InsightsPage() {
         { label: "Efficacy Index", value: "88", trend: "+2.1%", isPositive: true }
     ];
     
-    const rawInsight = data?.ai_strategic_advice || data?.main_insight || "Neural Synthesis Complete: Analysis confirms a resilient market position with optimized 1.3x ROI and balanced supply vectors.";
+    const rawInsight = data?.ai_strategic_advice || data?.main_insight || "Neural Synthesis: 1.3x ROI and balanced supply vectors confirmed.";
     
-    // Advanced introductory filter to ensure the executive summary starts with pure insight
-    const insightLines = (rawInsight || "").split('\n').filter((l: string) => l.trim().length > 0);
-    const mainInsight = insightLines.length > 1 && (insightLines[0].toLowerCase().includes('here is') || insightLines[0].toLowerCase().includes('executive summary') || insightLines[0].length < 30) 
-        ? insightLines.slice(1).join('\n') 
-        : (rawInsight || "");
+    const mainInsight = (rawInsight || "").length > 120 ? (rawInsight || "").substring(0, 120) + "..." : (rawInsight || "Neural Synthesis: 1.3x ROI optimization confirmed.");
     
     const topProduct = stats.find((s: any) => s.label === "Predictive ROI")?.value || "1.3x";
     const bestRegion = stats.find((s: any) => s.label === "Efficacy Index")?.value || "88";
@@ -200,12 +196,6 @@ export default function InsightsPage() {
             {/* Header Section */}
             <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <span className="px-4 py-1.5 bg-sapphire/10 text-sapphire text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-sapphire/20 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-sapphire rounded-full animate-pulse"></span>
-                            Neural Analysis Active
-                        </span>
-                    </div>
                     <h1 className="text-4xl md:text-6xl font-black text-navy dark:text-white tracking-tight leading-none">
                         Strategic <span className="text-transparent bg-clip-text bg-gradient-to-r from-sapphire via-emerald to-amber">Intelligence</span>
                     </h1>
@@ -423,10 +413,9 @@ export default function InsightsPage() {
                 </Card>
             </motion.div>
 
-            {/* Bottom Actions */}
             <motion.div 
                 variants={itemVariants}
-                className="flex items-center justify-center pt-16 border-t border-cool-gray dark:border-white/5"
+                className="flex items-center justify-center pt-16"
             >
                 <motion.button 
                     whileHover={{ scale: 1.05, y: -2 }}
@@ -440,3 +429,14 @@ export default function InsightsPage() {
     );
 }
 
+export default function InsightsPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex flex-col items-center justify-center h-[70vh]">
+                <div className="w-12 h-12 border-4 border-sapphire/20 border-t-sapphire rounded-full animate-spin"></div>
+            </div>
+        }>
+            <InsightsContent />
+        </Suspense>
+    );
+}

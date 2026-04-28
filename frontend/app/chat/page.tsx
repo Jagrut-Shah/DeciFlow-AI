@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, Suspense } from "react";
 import Card from "@/components/Card";
 import { FiSend, FiUser, FiInfo } from "react-icons/fi";
 import { FaRobot } from "react-icons/fa";
@@ -15,7 +15,7 @@ interface DeciMessage {
     sender: "ai" | "user";
 }
 
-export default function ChatPage() {
+function ChatContent() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session');
     
@@ -219,4 +219,15 @@ export default function ChatPage() {
         </div>
     );
 }
-
+
+export default function ChatPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex flex-col h-[calc(100vh-6rem)] max-w-5xl mx-auto items-center justify-center">
+                <div className="w-12 h-12 border-4 border-sapphire/20 border-t-sapphire rounded-full animate-spin"></div>
+            </div>
+        }>
+            <ChatContent />
+        </Suspense>
+    );
+}
