@@ -47,6 +47,8 @@ jobs:
           --region $REGION \
           --allow-unauthenticated \
           --set-env-vars "ENVIRONMENT=production,SECRET_KEY=${{ secrets.SECRET_KEY }},GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=$REGION,GEMINI_PRO_MODEL=gemini-1.5-pro,GEMINI_FLASH_MODEL=gemini-1.5-flash" \
+          --memory 2Gi \
+          --cpu-boost \
           --timeout=300
 
     # Frontend

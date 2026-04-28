@@ -109,6 +109,12 @@ app.add_exception_handler(Exception, generic_exception_handler)         # Catch-
 
 
 # 6. Core Routes
+@app.get("/", tags=["System"])
+async def root():
+    """Root endpoint for basic connectivity checks."""
+    return {"message": "DeciFlow AI API is running"}
+
+
 @app.get("/health", tags=["System"], response_model=APIResponse)
 @limiter.exempt
 async def health_check():

@@ -22,8 +22,16 @@ class ResultStore:
     _disk_lock = asyncio.Lock()
     _last_eviction = time.time()
 
-    def __init__(self, db_path: str = "data/db.json") -> None:
-        self.db_path = db_path
+    def __init__(self, db_path: Optional[str] = None) -> None:
+        if db_path:
+            self.db_path = db_path
+        else:
+            # Use /tmp for serverless environments where local disk is read-only
+            from app.core.config import settings
+            if settings.ENVIRONMENT == "production":
+                self.db_path = "/tmp/deciflow_db.json"
+            else:
+                self.db_path = "data/db.json"
         
         # Ensure data directory exists
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
