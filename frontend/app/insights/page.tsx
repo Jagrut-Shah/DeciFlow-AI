@@ -198,7 +198,7 @@ export default function InsightsPage() {
                             Neural Analysis Active
                         </span>
                     </div>
-                    <h1 className="text-6xl font-black text-navy dark:text-white tracking-tight leading-none">
+                    <h1 className="text-4xl md:text-6xl font-black text-navy dark:text-white tracking-tight leading-none">
                         Strategic <span className="text-transparent bg-clip-text bg-gradient-to-r from-sapphire via-emerald to-amber">Intelligence</span>
                     </h1>
                     <p className="text-body-text dark:text-white/60 text-xl font-medium max-w-2xl transition-colors">
@@ -233,7 +233,7 @@ export default function InsightsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {summaryCards.map((card, idx) => (
                     <motion.div key={card.title} variants={itemVariants}>
-                        <Card className="p-8 relative overflow-hidden group h-full border-none bg-white dark:bg-white/[0.03] backdrop-blur-3xl shadow-2xl shadow-cool-gray/20 dark:shadow-none hover:translate-y-[-4px] transition-all duration-500">
+                        <Card className="p-6 md:p-8 relative overflow-hidden group h-full border-none bg-white dark:bg-white/[0.03] backdrop-blur-3xl shadow-2xl shadow-cool-gray/20 dark:shadow-none hover:translate-y-[-4px] transition-all duration-500">
                             <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl ${card.gradient} rounded-bl-full opacity-30 group-hover:scale-125 transition-transform duration-1000 ease-out`}></div>
                             <div className="relative z-10">
                                 <div className={`w-14 h-14 rounded-2xl ${card.accent}/10 flex items-center justify-center text-3xl mb-8 border border-${card.accent}/20 ${card.textColor} shadow-inner transition-transform group-hover:scale-110 duration-500`}>
@@ -255,7 +255,7 @@ export default function InsightsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Visual Intelligence Column */}
                 <motion.div variants={itemVariants} className="lg:col-span-2">
-                    <Card className="p-10 h-full bg-white dark:bg-white/[0.03] backdrop-blur-3xl border-cool-gray dark:border-white/10 shadow-2xl relative overflow-hidden group">
+                    <Card className="p-6 md:p-10 h-full bg-white dark:bg-white/[0.03] backdrop-blur-3xl border-cool-gray dark:border-white/10 shadow-2xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                             <FiTrendingUp size={160} className="text-sapphire" />
                         </div>
@@ -291,7 +291,7 @@ export default function InsightsPage() {
 
                 {/* AI Executive Summary Card */}
                 <motion.div variants={itemVariants} className="lg:col-span-1">
-                    <Card className="p-10 h-full bg-gradient-to-br from-navy to-black text-white border-none shadow-2xl shadow-navy/40 relative overflow-hidden group">
+                    <Card className="p-6 md:p-10 h-full bg-gradient-to-br from-navy to-black text-white border-none shadow-2xl shadow-navy/40 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-sapphire/5 rounded-full blur-[80px] pointer-events-none group-hover:scale-150 transition-transform duration-1000"></div>
                         
                         <div className="relative z-10 h-full flex flex-col">
@@ -334,7 +334,7 @@ export default function InsightsPage() {
             {/* Tactical Deployment Matrix Section */}
             <motion.div variants={itemVariants} className="space-y-10 pt-20">
                 <div className="flex items-center justify-between border-b border-cool-gray dark:border-white/5 pb-8">
-                    <h3 className="text-4xl font-black text-navy dark:text-white uppercase tracking-tighter italic">Tactical Deployment Matrix</h3>
+                    <h3 className="text-2xl md:text-4xl font-black text-navy dark:text-white uppercase tracking-tighter italic">Tactical Deployment Matrix</h3>
                     <div className="flex items-center gap-3 text-emerald font-black text-xs uppercase tracking-widest">
                         <span className="relative flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald/40 opacity-75"></span>

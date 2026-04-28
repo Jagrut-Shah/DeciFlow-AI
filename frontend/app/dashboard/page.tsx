@@ -109,7 +109,7 @@ export default function Dashboard() {
             {/* Header Section */}
                 <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-6 w-full border-b border-cool-gray dark:border-white/5 pb-8">
                     <div>
-                        <h1 className="text-5xl font-black tracking-tight text-navy dark:text-white mb-3 transition-colors">
+                        <h1 className="text-3xl md:text-5xl font-black tracking-tight text-navy dark:text-white mb-3 transition-colors">
                             System <span className="text-transparent bg-clip-text bg-gradient-to-r from-sapphire via-emerald to-amber">Intelligence</span>
                         </h1>
                         <p className="text-body-text dark:text-white/60 text-xl font-medium max-w-2xl transition-colors">
@@ -139,7 +139,7 @@ export default function Dashboard() {
 
                     return (
                         <motion.div key={stat.label} variants={itemVariants} className="h-full">
-                            <Card className="p-8 h-full group cursor-default flex flex-col justify-between">
+                            <Card className="p-6 md:p-8 h-full group cursor-default flex flex-col justify-between">
                                 <div>
                                     <div className="flex justify-between items-start mb-8">
                                         <div className={`p-4 rounded-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 ${iconColors[index % iconColors.length]}`}>
@@ -161,7 +161,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Visualization */}
                 <motion.div variants={itemVariants} className="lg:col-span-2">
-                    <Card className="p-10 flex flex-col min-h-[500px] relative overflow-hidden group">
+                    <Card className="p-6 md:p-10 flex flex-col min-h-[400px] md:min-h-[500px] relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-10 opacity-[0.03] dark:opacity-[0.05] group-hover:opacity-[0.08] dark:group-hover:opacity-10 transition-opacity">
                             <FiTrendingUp size={160} className="text-sapphire" />
                         </div>
@@ -206,7 +206,7 @@ export default function Dashboard() {
 
                 {/* AI Insight Card */}
                 <motion.div variants={itemVariants}>
-                    <Card className="p-10 h-full flex flex-col bg-gradient-to-br from-sapphire/[0.04] via-emerald/[0.08] to-amber/[0.04] dark:from-sapphire/[0.08] dark:via-emerald/[0.12] dark:to-amber/[0.08] border-sapphire/20 dark:border-sapphire/30 relative group overflow-hidden">
+                    <Card className="p-6 md:p-10 h-full flex flex-col bg-gradient-to-br from-sapphire/[0.04] via-emerald/[0.08] to-amber/[0.04] dark:from-sapphire/[0.08] dark:via-emerald/[0.12] dark:to-amber/[0.08] border-sapphire/20 dark:border-sapphire/30 relative group overflow-hidden">
                         <motion.div 
                             animate={{ 
                                 scale: [1, 1.3, 1],

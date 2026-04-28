@@ -109,20 +109,20 @@ export default function ChatPage() {
                             transition={{ type: "spring", stiffness: 260, damping: 25 }}
                             className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} group`}
                         >
-                            <div className={`flex gap-5 max-w-[85%] md:max-w-[75%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div className={`flex gap-3 md:gap-5 max-w-[90%] md:max-w-[75%] ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                                 <motion.div 
                                     whileHover={{ scale: 1.1, rotate: 5 }}
-                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 shadow-lg ${
+                                    className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-500 shadow-lg ${
                                         msg.sender === 'user' 
                                         ? 'bg-white dark:bg-white/5 border-cool-gray dark:border-white/10' 
                                         : 'bg-sapphire/10 border-sapphire/20 shadow-sapphire/5'
                                     }`}
                                 >
-                                    {msg.sender === 'user' ? <FiUser size={20} className="text-navy dark:text-white/60" /> : <FaRobot size={22} className="text-sapphire animate-pulse" />}
+                                    {msg.sender === 'user' ? <FiUser size={18} className="text-navy dark:text-white/60" /> : <FaRobot size={20} className="text-sapphire animate-pulse" />}
                                 </motion.div>
                                 
                                 <div className={`
-                                    p-6 rounded-[2rem] shadow-2xl transition-all duration-500 relative group-hover:shadow-sapphire/5
+                                    p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl transition-all duration-500 relative group-hover:shadow-sapphire/5
                                     ${msg.sender === 'user'
                                          ? 'bg-gradient-to-br from-sapphire via-sapphire to-navy text-white rounded-tr-none shadow-sapphire/20'
                                          : 'bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 text-navy dark:text-white/80 rounded-tl-none backdrop-blur-3xl'}
@@ -147,8 +147,8 @@ export default function ChatPage() {
                         className="flex justify-start"
                     >
                         <div className="flex gap-5 items-center">
-                            <div className="w-12 h-12 rounded-2xl bg-sapphire/10 border border-sapphire/20 flex items-center justify-center shrink-0">
-                                <FaRobot size={22} className="text-sapphire/50 animate-pulse" />
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-sapphire/10 border border-sapphire/20 flex items-center justify-center shrink-0">
+                                <FaRobot size={20} className="text-sapphire/50 animate-pulse" />
                             </div>
                             <div className="bg-white/[0.03] border border-cool-gray dark:border-white/5 py-5 px-8 rounded-[2rem] rounded-tl-none backdrop-blur-md flex items-center gap-3">
                                 <motion.span 
@@ -177,7 +177,7 @@ export default function ChatPage() {
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-8"
+                className="p-4 md:p-8"
             >
                 <div className="relative">
                     <div className="absolute top-[-30px] left-6 flex items-center gap-2 text-muted-text dark:text-white/20 text-[10px] font-black uppercase tracking-[0.2em] pointer-events-none">
@@ -195,16 +195,16 @@ export default function ChatPage() {
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 placeholder="Query the system intelligence..."
-                                className="flex-1 bg-transparent border-none px-10 py-6 text-navy dark:text-white focus:outline-none focus:ring-0 placeholder:text-muted-text/50 font-medium text-[17px]"
+                                className="flex-1 bg-transparent border-none px-4 md:px-10 py-4 md:py-6 text-navy dark:text-white focus:outline-none focus:ring-0 placeholder:text-muted-text/50 font-medium text-[15px] md:text-[17px]"
                             />
                             <motion.button
                                 whileHover={{ scale: 1.05, x: 2 }}
                                 whileTap={{ scale: 0.95 }}
                                 type="submit"
                                 disabled={!inputValue.trim() || isTyping}
-                                className="bg-gradient-to-br from-sapphire to-navy hover:shadow-sapphire/30 disabled:opacity-20 text-white w-16 h-16 rounded-[2rem] flex items-center justify-center transition-all shadow-2xl shadow-sapphire/20"
+                                className="bg-gradient-to-br from-sapphire to-navy hover:shadow-sapphire/30 disabled:opacity-20 text-white w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-[2rem] flex items-center justify-center transition-all shadow-2xl shadow-sapphire/20 shrink-0"
                             >
-                                <FiSend size={22} className={inputValue.trim() ? "translate-x-0.5 -translate-y-0.5" : ""} />
+                                <FiSend size={18} className={inputValue.trim() ? "translate-x-0.5 -translate-y-0.5" : ""} />
                             </motion.button>
                         </form>
                     </Card>

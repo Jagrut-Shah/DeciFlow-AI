@@ -120,7 +120,7 @@ export default function UploadPage() {
                     <FiDatabase className="animate-pulse" />
                     Ingestion Engine v3
                 </div>
-                <h1 className="text-5xl font-black text-navy dark:text-white mb-6 tracking-tight">
+                <h1 className="text-3xl md:text-5xl font-black text-navy dark:text-white mb-6 tracking-tight">
                     Strategic <span className="text-transparent bg-clip-text bg-gradient-to-r from-sapphire to-emerald">Data Ingestion</span>
                 </h1>
                 <p className="text-muted-text dark:text-white/40 text-lg max-w-2xl mx-auto font-medium leading-relaxed">
@@ -134,7 +134,7 @@ export default function UploadPage() {
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     className={`
-                        relative rounded-[2.8rem] p-16 text-center transition-all duration-700
+                        relative rounded-[2.8rem] p-8 md:p-16 text-center transition-all duration-700
                         ${isDragging ? 'bg-sapphire/[0.04] scale-[0.98]' : 'bg-transparent'}
                     `}
                 >

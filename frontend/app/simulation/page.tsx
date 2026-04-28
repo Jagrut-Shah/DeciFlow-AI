@@ -123,7 +123,7 @@ export default function SimulationPage() {
             className="space-y-8"
         >
             <motion.div variants={itemVariants}>
-                <h1 className="text-4xl font-extrabold text-navy dark:text-white mb-2">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-navy dark:text-white mb-2">
                     Strategic <span className="text-sapphire">Simulation</span> Engine
                 </h1>
                 <p className="text-body-text dark:text-white/60 text-lg max-w-3xl">
@@ -134,7 +134,7 @@ export default function SimulationPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Controls */}
                 <motion.div variants={itemVariants} className="lg:col-span-2">
-                    <Card className="p-8 h-full">
+                    <Card className="p-6 md:p-8 h-full">
                         <h2 className="text-2xl font-bold text-navy dark:text-white mb-8 flex items-center gap-2">
                             <span className="w-8 h-8 rounded-lg bg-sapphire/10 flex items-center justify-center text-sapphire text-sm italic font-black">1</span>
                             Simulation Parameters
@@ -229,7 +229,7 @@ export default function SimulationPage() {
 
                 {/* Results */}
                 <motion.div variants={itemVariants} className="h-full">
-                    <Card className="p-8 h-full bg-gradient-to-br from-sapphire/[0.03] via-ice-blue to-transparent dark:from-sapphire/[0.07] dark:via-transparent dark:to-transparent flex flex-col border-sapphire/10 dark:border-white/5 relative overflow-hidden">
+                    <Card className="p-6 md:p-8 h-full bg-gradient-to-br from-sapphire/[0.03] via-ice-blue to-transparent dark:from-sapphire/[0.07] dark:via-transparent dark:to-transparent flex flex-col border-sapphire/10 dark:border-white/5 relative overflow-hidden">
                         {/* Interactive Background Elements */}
                         <motion.div 
                             animate={{ 
@@ -327,14 +327,14 @@ export default function SimulationPage() {
                                     >
                                         <motion.div 
                                             whileHover={{ scale: 1.02 }}
-                                            className="bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 rounded-[2.5rem] p-10 text-center shadow-2xl shadow-sapphire/5 backdrop-blur-xl"
+                                            className="bg-white dark:bg-white/[0.03] border border-cool-gray dark:border-white/10 rounded-[2.5rem] p-6 md:p-10 text-center shadow-2xl shadow-sapphire/5 backdrop-blur-xl"
                                         >
                                             <p className="text-muted-text dark:text-white/40 text-[10px] font-black mb-4 uppercase tracking-[0.2em]">Predicted Net Profit</p>
                                             <motion.p 
                                                 initial={{ scale: 0.5, opacity: 0 }}
                                                 animate={{ scale: 1, opacity: 1 }}
                                                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                                                className={`text-6xl font-black tracking-tighter transition-colors ${results.profit >= 0 ? 'text-emerald' : 'text-alert-red'}`}
+                                                className={`text-4xl md:text-6xl font-black tracking-tighter transition-colors ${results.profit >= 0 ? 'text-emerald' : 'text-alert-red'}`}
                                             >
                                                 {results.profit < 0 ? '-' : ''}₹{Math.abs(results.profit).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                             </motion.p>

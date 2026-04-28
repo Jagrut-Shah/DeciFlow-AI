@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`${inter.className} antialiased bg-white dark:bg-[#020617] text-navy dark:text-white min-h-screen overflow-hidden selection:bg-sapphire/20`}>
+      <body className={`${inter.className} antialiased bg-white dark:bg-[#020617] text-navy dark:text-white min-h-screen selection:bg-sapphire/20`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
