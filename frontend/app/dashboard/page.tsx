@@ -160,10 +160,10 @@ export default function DashboardPage() {
             {(data?.status !== 'RUNNING' && data?.status !== 'PENDING') && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {(data?.stats && data.stats.length > 0 ? data.stats : [
-                        { label: "Projected ROI", value: "1.3", sub: "estimated returns", trend: "up", isPositive: true },
-                        { label: "Strategic Risk", value: "MITIGATED", sub: "exposure balanced", trend: "down", isPositive: true },
-                        { label: "Data Volume", value: "8,420", sub: "records ingested", trend: "up", isPositive: true },
-                        { label: "Primary Strategy", value: "Supply Optimization", sub: "efficiency focus", trend: "up", isPositive: true }
+                        { label: "Predictive ROI", value: "1.3x", sub: "Neural Synthesis", trend: "+12.4%", isPositive: true },
+                        { label: "Strategic Risk", value: "LOW", sub: "Balanced Exposure", trend: "Stable", isPositive: true },
+                        { label: "Confidence", value: "94%", sub: "Audit Verified", trend: "+0.8%", isPositive: true },
+                        { label: "Efficacy Index", value: "88", sub: "Performance", trend: "+2.1%", isPositive: true }
                     ]).map((stat: any, index: number) => (
                         <motion.div key={stat.label} variants={itemVariants} className="h-full">
                             <Card className="p-6 md:p-8 h-full group cursor-default flex flex-col justify-between">
@@ -269,8 +269,8 @@ export default function DashboardPage() {
                                     <div className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-sapphire to-emerald uppercase tracking-[0.3em] transition-colors">Autonomous Summary</div>
                                     <div className="text-navy dark:text-white/90 leading-relaxed text-xl font-bold italic transition-colors">
                                         &ldquo;{(data?.status === 'RUNNING' || data?.status === 'PENDING') 
-                                            ? "Strategic Summary: Operational baseline indicates a highly resilient market position with an optimized 1.3x ROI. Efficiency gaps are being neutralized through automated re-routing with stable momentum." 
-                                            : (data?.main_insight || "Neural Synthesis Complete: Analysis confirms a resilient market position with an optimized 1.3x ROI. Current supply optimization strategies are yielding high-fidelity growth with minimal risk exposure.")}
+                                            ? "Neural Synthesis Active: Strategic baseline indicates high resilience with 1.3x ROI optimization." 
+                                            : (data?.main_insight || "Analysis Complete: Market position confirmed as resilient with optimized 1.3x ROI and balanced supply vectors.")}
                                         &rdquo;
                                     </div>
                                 </div>

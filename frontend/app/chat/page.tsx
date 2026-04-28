@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { useSearchParams } from "next/navigation";
 
-interface Message {
+interface DeciMessage {
     id: number;
     text: string;
     sender: "ai" | "user";
@@ -19,7 +19,7 @@ export default function ChatPage() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session');
     
-    const [messages, setMessages] = useState<Message[]>([
+    const [messages, setMessages] = useState<DeciMessage[]>([
         { id: 1, text: "Welcome to DeciFlow AI Copilot. I'm connected to your system data and ready to assist with strategic analysis. How can I help you today?", sender: "ai" }
     ]);
     const [inputValue, setInputValue] = useState("");
@@ -43,7 +43,7 @@ export default function ChatPage() {
         if (e) e.preventDefault();
         if (!inputValue.trim()) return;
 
-        const userMessage: Message = {
+        const userMessage: DeciMessage = {
             id: Date.now(),
             text: inputValue,
             sender: "user",
@@ -64,7 +64,7 @@ export default function ChatPage() {
             });
             
             if (result.status === 'success') {
-                const aiResponse: Message = {
+                const aiResponse: DeciMessage = {
                     id: Date.now() + 1,
                     text: result.data.response,
                     sender: "ai",
@@ -75,7 +75,7 @@ export default function ChatPage() {
             }
         } catch (error) {
             console.error("Chat error:", error);
-            const errorMsg: Message = {
+            const errorMsg: DeciMessage = {
                 id: Date.now() + 1,
                 text: "My neural link is experiencing high latency. Please ensure the kernel service is active and try resending your query.",
                 sender: "ai",
