@@ -9,6 +9,12 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { useSearchParams } from "next/navigation";
 
+interface Message {
+    id: number;
+    text: string;
+    sender: "ai" | "user";
+}
+
 export default function ChatPage() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session');
