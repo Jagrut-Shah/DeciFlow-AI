@@ -27,6 +27,13 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
+    - name: Set GCP Project
+      run: gcloud config set project $PROJECT_ID
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker
+
+    # Backend
     - name: Build Backend
       run: |
         gcloud builds submit backend \
@@ -41,6 +48,7 @@ jobs:
           --allow-unauthenticated \
           --set-env-vars GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
 
+    # Frontend
     - name: Build Frontend
       run: |
         gcloud builds submit frontend \
