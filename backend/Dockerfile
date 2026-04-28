@@ -24,5 +24,8 @@ COPY . .
 # Cloud Run expects this port
 EXPOSE 8080
 
-# Run FastAPI using uvicorn
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+# Use a more robust startup command
+# Setting PYTHONPATH ensures app can be found even if structure is nested
+ENV PYTHONPATH=/app
+
+CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]

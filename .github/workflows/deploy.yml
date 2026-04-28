@@ -46,7 +46,8 @@ jobs:
           --platform managed \
           --region $REGION \
           --allow-unauthenticated \
-          --set-env-vars "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=$REGION,GEMINI_PRO_MODEL=gemini-2.5-pro,GEMINI_FLASH_MODEL=gemini-2.5-flash"
+          --set-env-vars "ENVIRONMENT=production,SECRET_KEY=${{ secrets.SECRET_KEY }},GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=$REGION,GEMINI_PRO_MODEL=gemini-1.5-pro,GEMINI_FLASH_MODEL=gemini-1.5-flash" \
+          --timeout=300
 
     # Frontend
     - name: Build Frontend
