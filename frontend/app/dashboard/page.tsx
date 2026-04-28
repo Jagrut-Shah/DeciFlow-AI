@@ -145,6 +145,7 @@ export default function DashboardPage() {
                         Autonomous cross-signal correlation and high-fidelity business trajectory modeling.
                     </p>
                 </div>
+
                 <motion.button 
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}

@@ -7,7 +7,10 @@ RUN npm install
 
 COPY . .
 
-ENV NEXT_PUBLIC_API_URL=https://deciflow-ai-647556267131.europe-west1.run.app
+# Set the API URL as a build argument (can be passed via --build-arg)
+ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 
 RUN npm run build
 

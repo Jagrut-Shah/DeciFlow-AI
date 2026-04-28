@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -49,22 +50,34 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 # 2. Application Lifespan — startup + graceful shutdown
 from app.core.dependencies import get_task_queue, get_task_registry, get_pipeline_worker
 
+async def _startup_tasks():
+    """Internal helper to run heavy startup logic without blocking the main event loop."""
+    try:
+        logger.info("Initializing background services...")
+        queue = get_task_queue()
+        registry = get_task_registry()
+        registry.register("workflow_pipeline", get_pipeline_worker())
+        await queue.start_consuming(concurrency=3)
+        logger.info("Background services operational.")
+    except Exception as e:
+        logger.error(f"Startup task failed: {e}", exc_info=True)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- Startup ---
-    logger.info("Starting background queue consumers...")
-    queue = get_task_queue()
-    registry = get_task_registry()
-    registry.register("workflow_pipeline", get_pipeline_worker())
-    await queue.start_consuming(concurrency=3)
-    logger.info("Queue consumers started.")
-
+    startup_job = asyncio.create_task(_startup_tasks())
+    logger.info(f"FastAPI lifespan signaled ready. System booting in background...")
+    
     yield  # Application runs here
 
     # --- Shutdown ---
     logger.info("Shutting down queue consumers...")
+    if not startup_job.done():
+        startup_job.cancel()
+    queue = get_task_queue()
     await queue.stop_consuming()
     logger.info("Queue consumers stopped. Goodbye.")
+
 
 
 # 3. Initialize FastAPI

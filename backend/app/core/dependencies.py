@@ -175,13 +175,19 @@ def get_result_store() -> Optional[ResultStore]:
 # Queue & Worker Factories (Singletons)                                        #
 # =========================================================================== #
 
-_task_registry_instance = TaskRegistry()
-_task_queue_instance = MemoryQueue(registry=_task_registry_instance)
+_task_registry_instance = None
+_task_queue_instance = None
 
 def get_task_registry() -> ITaskRegistry:
+    global _task_registry_instance
+    if _task_registry_instance is None:
+        _task_registry_instance = TaskRegistry()
     return _task_registry_instance
 
 def get_task_queue() -> ITaskQueue:
+    global _task_queue_instance
+    if _task_queue_instance is None:
+        _task_queue_instance = MemoryQueue(registry=get_task_registry())
     return _task_queue_instance
 
 def get_pipeline_worker() -> PipelineWorker:

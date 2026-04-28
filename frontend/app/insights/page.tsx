@@ -203,6 +203,7 @@ function InsightsContent() {
                         Autonomous cross-signal correlation and high-fidelity business trajectory modeling.
                     </p>
                 </div>
+
                 <div className="flex gap-4">
                     <motion.button 
                         whileHover={{ scale: 1.02 }}

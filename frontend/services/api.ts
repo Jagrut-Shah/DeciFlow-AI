@@ -1,10 +1,9 @@
-// Ensure environment variable exists
-if (!process.env.NEXT_PUBLIC_API_URL) {
-  throw new Error("NEXT_PUBLIC_API_URL is not defined");
-}
+// Use env var if available, otherwise fall back to same-origin for runtime safety
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
-// ✅ Include /api/v1 prefix (VERY IMPORTANT)
-const baseUrl = process.env.NEXT_PUBLIC_API_URL as string;
+if (!baseUrl) {
+  console.warn("NEXT_PUBLIC_API_URL is not defined. Falling back to relative API calls.");
+}
 
 export const API_BASE_URL = `${baseUrl}/api/v1`;
 
